@@ -1,0 +1,13 @@
+FROM alpine
+RUN apk add --no-cache ca-certificates
+ADD mqtt-proxy.tar.gz /usr/bin
+
+EXPOSE 1883
+ENV PORT 1883
+ENV MQTT_HOST 0.0.0.0
+ENV MQTT_PORT 1883
+ENV MQTT_USERNAME guest
+ENV MQTT_PASSWORD guest
+ENV AUTH_URL ""
+
+CMD ["mqtt-proxy"]

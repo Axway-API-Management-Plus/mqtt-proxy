@@ -1,0 +1,63 @@
+version: "2"
+
+services:
+  sut:
+    build: ./tests/test
+    command: npm test
+    depends_on:
+    - mqtt-proxy
+    - policy
+    #- rabbitmq
+    - mosquitto
+    #- activemq
+
+  mqtt-proxy:
+    build: .
+    environment:
+      PORT: 1883
+      HOST: 0.0.0.0
+      MQTT_HOST: mosquitto # activemq / rabbitmq / mosquitto
+      MQTT_PORT: 1883
+      MQTT_USER: guest
+      MQTT_PASSWORD: guest
+      AUTH_URL: http://policy:3000/mqtt
+    tty: true
+    ports:
+      - 1883:1883   # MQTT
+    depends_on:
+    - policy
+
+  policy:
+    build: tests/policy
+    volumes:
+    - ./tests/policy:/usr/src/app
+
+  rabbitmq:
+    build: tests/rabbitmq
+    ports:
+      - 5672        # AMQP
+      - 15672:15672 # UI
+      - 5883:1883   # MQTT
+
+  mosquitto:
+    image: eclipse-mosquitto
+    ports:
+      - 9883:1883   # MQTT
+      - 9001:9001
+    volumes:
+      - /mosquitto/data
+      - /mosquitto/log
+      - ./tests/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
+  activemq:
+    image: rmohr/activemq:5.14.3-alpine
+    ports:
+      - 61616:61616 # JMS
+      - 8161:8161   # UI
+      - 5672        # AMQP  (since `rmohr/activemq:5.12.1`)
+      - 61613:61613 # STOMP (since `rmohr/activemq:5.12.1`)
+      - 6883:1883   # MQTT  (since `rmohr/activemq:5.12.1`)
+      - 61614:61614 # WS    (since `rmohr/activemq:5.12.1`)
+    volumes:
+      #- ./activemq/config:/opt/activemq/conf
+      - /var/activemq/data

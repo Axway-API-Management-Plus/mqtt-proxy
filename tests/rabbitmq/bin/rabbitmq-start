@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+
+stop() {
+  echo "Stopping..."
+  kill $rabbitmq
+  rabbitmqctl stop
+  exit 0
+}
+trap "stop" SIGTERM SIGINT
+
+ulimit -n 1024
+chown -R rabbitmq:rabbitmq /data
+rabbitmq-server & #-detached
+rabbitmq=$!
+echo $rabbitmq
+
+sleep 10
+if ! rabbitmqctl list_users | grep ^admin ; then
+  P=$(apg -a 0 -n 1)
+  rabbitmqctl add_user admin "$P"
+  rabbitmqctl set_user_tags admin administrator
+  echo "---- admin password: $P"
+fi
+rabbitmqctl add_user user1 "user1"
+tail -F /data/log/bunny@localhost.log
