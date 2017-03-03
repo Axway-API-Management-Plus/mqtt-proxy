@@ -6,82 +6,24 @@ Command Line
 mqtt-proxy --auth-url <AUTH_URL:api-gateway> --mqtt-username <MQTT_USERNAME:guest> --mqtt-password <MQTT_PASSWORD:guest> --mqtt-host <MQTT_HOST> --mqtt-port <MQTT_PORT>
 ```
 
-Test full environment with docker compose
+Test full environment with docker
 ```
-docker-compose -f docker-compose.test.yml up
+docker-compose -f docker-compose.yml up
 ```
 
 ## Configure
-When AUTH_URL is set, every mqtt packet (CONNECT, SUBSCRIBE, PUBLISH in/out) are check against a MQTT-AUTH-API :
-### `POST $AUTH_URL/connect`
-#### Request
-```json
-{ "Uuid": "",
-  "Username" : "",
-  "Password" : "",
-  "ClientID" : "",
-}
-```
-#### Response 200
-```json
-{
-  "Username" : "Override",
-  "Password" : "Override",
-  "ClientID" : "Override",
-}
-```
-#### Response Error
-The mqtt connection is aborted...
 
-### `POST $AUTH_URL/subscribe`
-#### Request
-```json
- { "Uuid": "",
-   "Username" : "",
-   "Password" : "",
-   "ClientID" : "",
-   "Topic" : ""
-}
-```
-#### Response
-```json
-{
-   "Topic" : "Override"
-}
-```
-#### Response Error
-The subscription is cleanly rejected
+When AUTH_URL is set, every mqtt packet (CONNECT, SUBSCRIBE, PUBLISH in/out) are check against a [AUTH_API](./AUTH_API.md)
 
-### `$AUTH_URL/publish`, `$AUTH_URL/receive`
-#### Request
-```json
-{ "Uuid": "",
-   "Username" : "",
-   "Password" : "",
-   "ClientID" : "",
-   "Topic" : "",
-   "Message": ""
-}
-```
-#### Response
-```json
-{
-   "Topic" : "Override",
-   "Message": "Override"
-}
-```
-#### Response Error
-The connetion is is aborted (No MQTT Protocol way)
 
-## Build
-### Binary:
+## Build standalone binary:
 Prerequisites : `golang`
 ```sh
 make install-deps
 make
 ```
 
-### Docker
+## Build docker image
 
 ```
 docker build -t mqtt-proxy:dev .
