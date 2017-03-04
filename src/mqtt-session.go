@@ -33,15 +33,15 @@ func NewSession() *Session {
 	return &session
 }
 
-func (session *Session) forwardHalf(c1 net.Conn, c2 net.Conn) {
+func (session *Session) forwardHalf(way string, c1 net.Conn, c2 net.Conn) {
 	defer c1.Close()
 	defer c2.Close()
 	defer session.wg.Done()
 	//io.Copy(c1, c2)
 
 	for {
-		log.Println("Session", session.id, "- Wait Packet", c1.RemoteAddr().String(), c2.RemoteAddr().String())
-		err := session.ForwardMQTTPacket(c1, c2)
+		log.Println("Session", session.id, way, "- Wait Packet", c1.RemoteAddr().String(), c2.RemoteAddr().String())
+		err := session.ForwardMQTTPacket(way, c1, c2)
 		if err != nil {
 			session.closed = true
 			break
@@ -61,8 +61,8 @@ func (session *Session) Stream(conn net.Conn) {
 	}
 	log.Println("Session", session.id, "- Connected", conn.RemoteAddr().String(), addr)
 	session.outbound = client
-	go session.forwardHalf(client, conn)
-	go session.forwardHalf(conn, client)
+	go session.forwardHalf("<", client, conn)
+	go session.forwardHalf(">", conn, client)
 	session.wg.Wait()
 
 	atomic.AddInt32(&globalSessionCount, -1)

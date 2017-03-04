@@ -7,24 +7,24 @@ import (
 	"github.com/eclipse/paho.mqtt.golang/packets"
 )
 
-func (session *Session) ForwardMQTTPacket(r net.Conn, w net.Conn) error {
+func (session *Session) ForwardMQTTPacket(way string, r net.Conn, w net.Conn) error {
 	cp, err := packets.ReadPacket(r)
 	if err != nil {
 		if !session.closed {
-			log.Errorln("Session", session.id, "- Error reading MQTT packet", err)
+			log.Errorln("Session", session.id, way, "- Error reading MQTT packet", err)
 		}
 		return err
 	}
-	log.Println("Session", session.id, "- Forward MQTT packet", cp.String())
+	log.Println("Session", session.id, way, "- Forward MQTT packet", cp.String())
 
 	if authURL != "" {
 		switch p := cp.(type) {
 		case *packets.ConnectPacket: /*Outbound only*/
-			err = session.HandleConnect(p, r, w)
+			err = session.HandleConnect(way, p, r, w)
 		case *packets.SubscribePacket: /*Outbound only*/
-			err = session.HandleSubscribe(p, r, w)
+			err = session.HandleSubscribe(way, p, r, w)
 		case *packets.PublishPacket: /*Inbound/Outbound only*/
-			err = session.HandlePublish(p, r, w)
+			err = session.HandlePublish(way, p, r, w)
 		default:
 			err = nil
 		}
@@ -33,13 +33,13 @@ func (session *Session) ForwardMQTTPacket(r net.Conn, w net.Conn) error {
 	}
 
 	if err != nil {
-		log.Println("Session", session.id, "- Forward MQTT packet", err)
+		log.Println("Session", session.id, way, "- Forward MQTT packet", err)
 		return err
 	}
 
 	err = cp.Write(w)
 	if err != nil {
-		log.Errorln("Session", session.id, "- Error writing MQTT packet", err)
+		log.Errorln("Session", session.id, way, "- Error writing MQTT packet", err)
 		return err
 	}
 	return nil

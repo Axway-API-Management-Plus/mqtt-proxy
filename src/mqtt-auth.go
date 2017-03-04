@@ -54,7 +54,7 @@ type MQTTPublishResponse struct {
 	Payload string
 }
 
-func request(uri string, request interface{}, response interface{}) (int, error) {
+func (session *Session) request(way string, uri string, request interface{}, response interface{}) (int, error) {
 	//req.Header.Add("API-KEY", "tenant:admin")
 	jData, err := json.Marshal(request)
 	if err != nil {
@@ -67,7 +67,7 @@ func request(uri string, request interface{}, response interface{}) (int, error)
 	}
 	client := &http.Client{Transport: tr}
 
-	req, err := http.NewRequest("GET", authURL+uri, nil)
+	req, err := http.NewRequest("POST", authURL+uri, nil)
 	if err != nil {
 		return 0, err
 	}
@@ -87,7 +87,7 @@ func request(uri string, request interface{}, response interface{}) (int, error)
 		return 0, err
 	}
 
-	log.Println("auth response", resp.StatusCode, string(body))
+	log.Println("Session", session.id, way, "- Auth response", authURL+uri, resp.StatusCode, string(body))
 	if response != nil {
 		err = json.Unmarshal(body, response)
 		if err != nil {
@@ -98,13 +98,13 @@ func request(uri string, request interface{}, response interface{}) (int, error)
 	return resp.StatusCode, nil
 }
 
-func (session *Session) HandleConnect(p *packets.ConnectPacket, r net.Conn, w net.Conn) error {
+func (session *Session) HandleConnect(way string, p *packets.ConnectPacket, r net.Conn, w net.Conn) error {
 	log.Println("Session", session.id, "- CONNECT")
 	var resp MQTTConnectResponse
 	rq := MQTTConnect{session.id, p.Username, string(p.Password), p.ClientIdentifier, p.CleanSession, p.ProtocolName, int(p.ProtocolVersion)}
-	code, err := request("/connect", rq, &resp)
+	code, err := session.request(way, "/connect", rq, &resp)
 	if err != nil {
-		log.Errorln("Session", session.id, "- Error getting connect authorization", err)
+		log.Errorln("Session", session.id, way, "- Error getting connect authorization", err)
 		return err
 	}
 
@@ -118,15 +118,15 @@ func (session *Session) HandleConnect(p *packets.ConnectPacket, r net.Conn, w ne
 
 	//Override information
 	if resp.ClientIdentifier != "" && resp.ClientIdentifier != p.ClientIdentifier {
-		log.Println("Session", session.id, "- CONNECT alter ClientIdentifier", p.ClientIdentifier, "-->", resp.ClientIdentifier)
+		log.Println("Session", session.id, way, "- CONNECT alter ClientIdentifier", p.ClientIdentifier, "-->", resp.ClientIdentifier)
 		p.ClientIdentifier = resp.ClientIdentifier
 	}
 	if resp.Username != "" && resp.Username != p.Username {
-		log.Println("Session", session.id, "- CONNECT alter Username", p.Username, "-->", resp.Username)
+		log.Println("Session", session.id, way, "- CONNECT alter Username", p.Username, "-->", resp.Username)
 		p.Username = resp.Username
 	}
 	if resp.Password != "" && resp.Password != string(p.Password) {
-		log.Println("Session", session.id, "- CONNECT alter Password")
+		log.Println("Session", session.id, way, "- CONNECT alter Password")
 		p.Password = []byte(resp.Password)
 	}
 
@@ -136,16 +136,16 @@ func (session *Session) HandleConnect(p *packets.ConnectPacket, r net.Conn, w ne
 	return nil
 }
 
-func (session *Session) HandleSubscribe(p *packets.SubscribePacket, r net.Conn, w net.Conn) error {
-	log.Println("Session", session.id, "- SUBSCRIBE", p.Topics, p.Qos)
+func (session *Session) HandleSubscribe(way string, p *packets.SubscribePacket, r net.Conn, w net.Conn) error {
+	log.Println("Session", session.id, way, "- SUBSCRIBE", p.Topics, p.Qos)
 	var resp MQTTSubscribeResponse
 	topics := p.Topics
 	for i := range p.Topics {
 		rq := MQTTSubscribe{session.id, session.Username, session.ClientIdentifier, p.Topics[i], int(p.Qos)}
-		code, err := request("/subscribe", rq, &resp)
+		code, err := session.request(way, "/subscribe", rq, &resp)
 
 		if err != nil {
-			log.Errorln("Session", session.id, "- Error getting subscribe authorization", err)
+			log.Errorln("Session", session.id, way, "- Error getting subscribe authorization", err)
 			return err
 		}
 		if code != 200 {
@@ -154,13 +154,13 @@ func (session *Session) HandleSubscribe(p *packets.SubscribePacket, r net.Conn, 
 			suback.ReturnCodes = []byte{packets.ErrRefusedNotAuthorised}
 			err := suback.Write(r)
 			if err != nil {
-				log.Errorln("Session", session.id, "- Error writing subscribe ack error message", err)
+				log.Errorln("Session", session.id, way, "- Error writing subscribe ack error message", err)
 			}
 			return errors.New("Subscribe Not Authorized")
 		}
 
 		if resp.Topic != "" && resp.Topic != topics[i] {
-			log.Println("Session", session.id, "- SUBSCRIBE alter topic", i, topics[i], "-->", resp.Topic)
+			log.Println("Session", session.id, way, "- SUBSCRIBE alter topic", i, topics[i], "-->", resp.Topic)
 			topics[i] = resp.Topic
 		}
 	}
@@ -170,32 +170,32 @@ func (session *Session) HandleSubscribe(p *packets.SubscribePacket, r net.Conn, 
 	return nil
 }
 
-func (session *Session) HandlePublish(p *packets.PublishPacket, r net.Conn, w net.Conn) error {
+func (session *Session) HandlePublish(way string, p *packets.PublishPacket, r net.Conn, w net.Conn) error {
 	action := "PUBLISH"
 	uri := "/publish"
 	if w == session.inbound {
 		action = "RECEIVE"
 		uri = "/receive"
 	}
-	log.Println("Session", session.id, "- "+action, r.RemoteAddr().String(), w.RemoteAddr().String())
-	log.Println("Session", session.id, "- "+action, p.TopicName, p.Qos, string(p.Payload))
+	log.Println("Session", session.id, way, "- "+action, r.RemoteAddr().String(), w.RemoteAddr().String())
+	log.Println("Session", session.id, way, "- "+action, p.TopicName, p.Qos, string(p.Payload))
 	rq := MQTTPublish{session.id, session.Username, session.ClientIdentifier, p.TopicName, int(p.Qos), string(p.Payload)}
 	var resp MQTTPublishResponse
-	code, err := request(uri, rq, &resp)
+	code, err := session.request(way, uri, rq, &resp)
 
 	if err != nil {
-		log.Errorln("Session", session.id, "- Error getting Publish authorization", err)
+		log.Errorln("Session", session.id, way, "- Error getting Publish authorization", err)
 		return err
 	}
 	if code != 200 {
 		return errors.New(action + " Not Authorized")
 	}
 	if resp.Topic != "" && resp.Topic != p.TopicName {
-		log.Println("Session", session.id, "- "+action+" alter topic", p.TopicName, "-->", resp.Topic)
+		log.Println("Session", session.id, way, "- "+action+" alter topic", p.TopicName, "-->", resp.Topic)
 		p.TopicName = resp.Topic
 	}
 	if resp.Payload != "" && resp.Payload != string(p.Payload) {
-		log.Println("Session", session.id, "- "+action+"alter topic", p.Payload, "-->", resp.Payload)
+		log.Println("Session", session.id, way, "- "+action+"alter topic", p.Payload, "-->", resp.Payload)
 		p.Payload = []byte(resp.Payload)
 	}
 	return nil
