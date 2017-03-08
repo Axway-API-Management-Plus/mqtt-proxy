@@ -1,0 +1,46 @@
+variables:
+  NODEJS_ORG_MIRROR: http://central.ecd.axway.int/content/repositories/nodejs-releases/
+  IMAGE: ${DOCKER_SNAPSHOT_REGISTRY}/jdavanne/mqtt-proxy:$CI_BUILD_REF
+
+stages:
+  - build
+  - package
+  - test
+
+module_tests:
+  image: golang
+  stage: build
+  script:
+    - make install
+    - make build
+  tags:
+    - golang
+
+docker-build:
+  image: gitlab/dind:latest
+  before_script:
+    - echo login to docker registry with $DOCKER_REGISTRY_USER
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD registry.ecd.axway.int
+  stage: package
+  script:
+    - docker build -t ${IMAGE}-build .
+    - docker run --rm ${IMAGE}-build tar cz $(NAME) >$(NAME).tar.gz
+    - docker build -t ${IMAGE} -f Dockerfile.small .
+    - docker rmi ${IMAGE}-build
+    - docker push ${IMAGE}
+  tags:
+    - dind
+
+integration_tests:
+  image: gitlab/dind:latest
+  variables:
+    DEV_SUFFIX: "-ci"
+    ST_AGENT_BASE_IMAGE: "registry.ecd.axway.int/cloudmind/st-agent-ci"
+  stage: test
+  script:
+    - echo login to docker registry with $DOCKER_REGISTRY_USER
+    - docker login -u $DOCKER_REGISTRY_USER -p $DOCKER_REGISTRY_PASSWORD registry.ecd.axway.int
+    - docker-compose -f docker-compose.test.yml build
+    - docker-compose -f docker-compose.test.yml run sut
+  tags:
+    - dind
