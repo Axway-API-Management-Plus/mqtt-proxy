@@ -14,7 +14,7 @@ module_tests:
     - make install
     - make build
   tags:
-    - golang
+    - shared
 
 docker-build:
   image: gitlab/dind:latest
@@ -29,7 +29,7 @@ docker-build:
     - docker rmi ${IMAGE}-build
     - docker push ${IMAGE}
   tags:
-    - dind
+    - shared
 
 integration_tests:
   image: gitlab/dind:latest
@@ -43,4 +43,4 @@ integration_tests:
     - docker-compose -f docker-compose.test.yml build
     - docker-compose -f docker-compose.test.yml run sut
   tags:
-    - dind
+    - shared
