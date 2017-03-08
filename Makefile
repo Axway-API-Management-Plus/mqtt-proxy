@@ -5,7 +5,9 @@ BUILD := $(shell git rev-parse HEAD | cut -c1-8)
 LDFLAGS :=-ldflags "-s -w -X=main.Version=$(VERSION) -X=main.Build=$(BUILD) -X=main.Date=$(DATE)"
 .PHONY: docker all
 
-all:
+all: build
+
+build:
 	(cd src ; go build -o ../$(NAME) $(LDFLAGS))
 
 docker-test:
