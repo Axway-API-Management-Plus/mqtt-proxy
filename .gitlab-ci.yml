@@ -1,4 +1,5 @@
 variables:
+  DOCKER_SNAPSHOT_REGISTRY: registry.axwaytest.net
   IMAGE: ${DOCKER_SNAPSHOT_REGISTRY}/jdavanne/mqtt-proxy:$CI_BUILD_REF
 
 image: docker:latest
