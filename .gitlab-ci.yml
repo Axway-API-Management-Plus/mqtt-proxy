@@ -18,7 +18,7 @@ build:
   - shared
 test:
   stage: test
-  image: docker/compose:1.11.2
+  image: tmaier/docker-compose
   before_script:
   - docker info
   script:
