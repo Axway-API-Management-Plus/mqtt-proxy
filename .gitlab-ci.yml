@@ -4,8 +4,7 @@ variables:
   NAME: mqtt-proxy
 
 image: docker:latest
-before_script:
-- docker info
+
 
 build:
   stage: build
@@ -16,8 +15,20 @@ build:
   tags:
   - shared
 
-build-docker:
-  stage: build
+test:
+  stage: test
+  before_script:
+  - docker info
+  script:
+  - docker-compose -f docker-compose.test.yml down
+  - docker-compose -f docker-compose.test.yml build
+  - docker-compose -f docker-compose.test.yml run sut
+  - docker-compose -f docker-compose.test.yml down
+
+package:
+  stage: package 
+  before_script:
+  - docker info
   script:
   - docker build -t ${IMAGE}-build .
   - docker run --rm ${IMAGE}-build tar cz ${NAME} >${NAME}.tar.gz
