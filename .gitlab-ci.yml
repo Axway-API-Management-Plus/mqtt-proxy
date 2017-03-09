@@ -11,7 +11,7 @@ build:
   stage: build
   script:
   - docker build -t ${IMAGE}-build .
-  - docker run --rm ${IMAGE}-build tar cz $(NAME) >$(NAME).tar.gz
+  - docker run --rm ${IMAGE}-build tar cz ${NAME} >${NAME}.tar.gz
   - docker build -t ${IMAGE} -f Dockerfile.small .
   - docker rmi ${IMAGE}-build
   #- docker push ${IMAGE}
