@@ -18,6 +18,7 @@ build:
   - shared
 test:
   stage: test
+  image: docker/compose:latest 
   before_script:
   - docker info
   script:
