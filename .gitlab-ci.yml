@@ -2,9 +2,11 @@ variables:
   DOCKER_SNAPSHOT_REGISTRY: registry.axwaytest.net
   IMAGE: ${DOCKER_SNAPSHOT_REGISTRY}/jdavanne/mqtt-proxy:$CI_BUILD_REF
   NAME: mqtt-proxy
-
 image: docker:latest
-
+stages:
+  - build
+  - test
+  - deploy
 
 build:
   stage: build
@@ -14,7 +16,6 @@ build:
   - make build
   tags:
   - shared
-
 test:
   stage: test
   before_script:
@@ -26,9 +27,8 @@ test:
   - docker-compose -f docker-compose.test.yml down
   tags:
   - shared
-
-package:
-  stage: package 
+deploy:
+  stage: deploy
   before_script:
   - docker info
   script:
@@ -39,4 +39,3 @@ package:
   #- docker push ${IMAGE}
   tags:
   - shared
-
