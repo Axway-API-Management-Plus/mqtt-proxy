@@ -2,8 +2,17 @@
 
 ## Start
 Command Line
-```
-mqtt-proxy --auth-url <AUTH_URL:api-gateway> --mqtt-username <MQTT_USERNAME:guest> --mqtt-password <MQTT_PASSWORD:guest> --mqtt-host <MQTT_HOST> --mqtt-port <MQTT_PORT>
+```sh
+mqtt-proxy [--auth-url <AUTH_URL:api-gateway>] \
+           [--mqtt-broker-username <MQTT_BROKER_USERNAME:guest>] \
+           [--mqtt-broker-password <MQTT_BROKER_PASSWORD:guest>] \
+           [--mqtt-broker-host <MQTT_BROKER_HOST:localhost>] \
+           [--mqtt-broker-port <MQTT_BROKER_PORT:1883>] \
+           \
+           [--host <HOST:0.0.0.0>] \
+           [--port <PORT:1883>] \
+           [--http-host <HTTP_HOST:0.0.0.0>] \
+           [--http-port <HTTP_PORT:8080>]
 ```
 
 Test full environment with docker
@@ -42,6 +51,11 @@ docker build -t mqtt-proxy -f Dockerfile.small .
 ```
 make docker-test
 ```
+
+## Changelog
+* 0.0.3
+  * Add websocket support `--http-host` `--http-port`
+  * rename `--mqtt-*` variables to `--mqtt-broker-*`
 
 ## Todo
 - Configurable Route to the mqtt server on CONNECT

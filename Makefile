@@ -1,8 +1,9 @@
-VERSION := 0.0.2
+VERSION := 0.0.3
 NAME := mqtt-proxy
 DATE := $(shell date +'%Y-%M-%d_%H:%M:%S')
 BUILD := $(shell git rev-parse HEAD | cut -c1-8)
 LDFLAGS :=-ldflags "-s -w -X=main.Version=$(VERSION) -X=main.Build=$(BUILD) -X=main.Date=$(DATE)"
+IMAGE := jdavanne/$(NAME)
 .PHONY: docker all
 
 all: build
@@ -43,7 +44,7 @@ docker-run:
 	docker-compose up
 
 docker:
-	docker build -t $(NAME):build .
-	docker run --rm $(NAME):build tar cz $(NAME) >$(NAME).tar.gz
-	docker build -t $(NAME) -f Dockerfile.small .
-	docker rmi $(NAME):build
+	docker build -t $(IMAGE):build .
+	docker run --rm $(IMAGE):build tar cz $(NAME) >$(NAME).tar.gz
+	docker build -t $(IMAGE) -f Dockerfile.small .
+	docker rmi $(IMAGE):build

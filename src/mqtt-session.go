@@ -49,20 +49,28 @@ func (session *Session) forwardHalf(way string, c1 net.Conn, c2 net.Conn) {
 	}
 }
 
-func (session *Session) Stream(conn net.Conn) {
-	session.inbound = conn
-	session.wg.Add(2)
-	addr := mqttHost + ":" + strconv.Itoa(mqttPort)
+func (session *Session) DialOutbound() error {
+	addr := mqttBrokerHost + ":" + strconv.Itoa(mqttBrokerPort)
 	log.Println("Session", session.id, "- Dialing...", session.id, addr)
 	client, err := net.Dial("tcp", addr)
 	if err != nil {
 		log.Errorln("Session", session.id, "- Dial failed :", addr, err)
+		return err
+	}
+	log.Println("Session", session.id, "- Connected", session.inbound.RemoteAddr().String(), addr)
+	session.outbound = client
+	return nil
+}
+
+func (session *Session) Stream(conn net.Conn) {
+	session.inbound = conn
+	session.wg.Add(2)
+	err := session.DialOutbound()
+	if err != nil {
 		return
 	}
-	log.Println("Session", session.id, "- Connected", conn.RemoteAddr().String(), addr)
-	session.outbound = client
-	go session.forwardHalf("<", client, conn)
-	go session.forwardHalf(">", conn, client)
+	go session.forwardHalf("<", session.outbound, session.inbound)
+	go session.forwardHalf(">", session.inbound, session.outbound)
 	session.wg.Wait()
 
 	atomic.AddInt32(&globalSessionCount, -1)

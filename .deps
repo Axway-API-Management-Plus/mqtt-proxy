@@ -1,4 +1,5 @@
 github.com/eclipse/paho.mqtt.golang/packets
+github.com/gorilla/websocket
 github.com/namsral/flag
 github.com/satori/go.uuid
 github.com/Sirupsen/logrus

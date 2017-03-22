@@ -16,10 +16,10 @@ services:
     environment:
       PORT: 1883
       HOST: 0.0.0.0
-      MQTT_HOST: mosquitto # activemq / rabbitmq / mosquitto
-      MQTT_PORT: 1883
-      MQTT_USER: guest
-      MQTT_PASSWORD: guest
+      MQTT_BROKER_HOST: mosquitto # activemq / rabbitmq / mosquitto
+      MQTT_BROKER_PORT: 1883
+      MQTT_BROKER_USER: guest
+      MQTT_BROKER_PASSWORD: guest
       AUTH_URL: http://policy:3000/mqtt
     tty: true
     ports:

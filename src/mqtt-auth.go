@@ -111,9 +111,9 @@ func (session *Session) HandleConnect(way string, p *packets.ConnectPacket, r ne
 	if code != 200 {
 		return errors.New("Connect Not Authorized")
 	}
-	if mqttUsername != "" {
-		p.Username = mqttUsername
-		p.Password = []byte(mqttPassword)
+	if mqttBrokerUsername != "" {
+		p.Username = mqttBrokerUsername
+		p.Password = []byte(mqttBrokerPassword)
 	}
 
 	//Override information

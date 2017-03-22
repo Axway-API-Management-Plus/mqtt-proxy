@@ -12,10 +12,12 @@ import (
 
 var host string
 var port int
-var mqttHost string
-var mqttPort int
-var mqttUsername string
-var mqttPassword string
+var httpHost string
+var httpPort int
+var mqttBrokerHost string
+var mqttBrokerPort int
+var mqttBrokerUsername string
+var mqttBrokerPassword string
 var authURL string
 var Version string
 var Build string
@@ -29,17 +31,21 @@ func main() {
 	log.SetFormatter(formatter)
 	log.SetLevel(log.DebugLevel)
 
-	flag.IntVar(&port, "port", 1883, "Specify the port to listen to.")
-	flag.StringVar(&host, "host", "0.0.0.0", "Specify the interface to listen to.")
-	flag.IntVar(&mqttPort, "mqtt-port", 1883, "Specify the port of the mqtt server")
-	flag.StringVar(&mqttHost, "mqtt-host", "0.0.0.0", "Specify the host the mqtt server.")
-	flag.StringVar(&mqttUsername, "mqtt-username", "", "Specify the username of the mqtt server. Reuse incoming one if empty")
-	flag.StringVar(&mqttPassword, "mqtt-password", "", "Specify the password the mqtt server.")
+	flag.IntVar(&port, "port", 1883, "Specify the mqtt port to listen to.")
+	flag.StringVar(&host, "host", "0.0.0.0", "Specify the mqtt interface to listen to.")
+	flag.StringVar(&httpHost, "http-host", "0.0.0.0", "Listen http port (for http and websockets)")
+	flag.IntVar(&httpPort, "http-port", 8080, "Listen http port (for http and websockets)")
+
+	flag.IntVar(&mqttBrokerPort, "mqtt-broker-port", 1883, "Specify the port of the mqtt server")
+	flag.StringVar(&mqttBrokerHost, "mqtt-broker-host", "0.0.0.0", "Specify the host the mqtt server.")
+	flag.StringVar(&mqttBrokerUsername, "mqtt-broker-username", "", "Specify the username of the mqtt server. Reuse incoming one if empty")
+	flag.StringVar(&mqttBrokerPassword, "mqtt-broker-password", "", "Specify the password the mqtt server.")
+
 	flag.StringVar(&authURL, "auth-url", "", "Specify the url of the registry service.")
 	flag.Parse()
 
 	log.Println("Starting mqtt-proxy @ ", Version, Build, Date)
-	log.Println("mqtt server ", mqttHost, mqttPort, mqttUsername, mqttPassword)
+	log.Println("mqtt server ", mqttBrokerHost, mqttBrokerPort, mqttBrokerUsername, mqttBrokerPassword)
 
 	if authURL != "" {
 		log.Println("auth connect   : ", authURL+"/connect")
@@ -48,6 +54,9 @@ func main() {
 	} else {
 		log.Println("auth : no auth url configured : bypassing!")
 	}
+
+	go wslisten()
+
 	// Listen for incoming connections.
 	addr := host + ":" + strconv.Itoa(port)
 	l, err := net.Listen("tcp", addr)
