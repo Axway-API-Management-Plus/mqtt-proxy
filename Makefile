@@ -11,6 +11,9 @@ all: build
 build:
 	(cd src ; go build -o ../$(NAME) $(LDFLAGS))
 
+dev:
+	ls -d src/* | entr -r sh -c "make && ./mqtt-proxy --mqtt-broker-host localhost --mqtt-broker-port 9883"
+
 docker-test:
 	docker-compose -f docker-compose.test.yml down
 	docker-compose -f docker-compose.test.yml build

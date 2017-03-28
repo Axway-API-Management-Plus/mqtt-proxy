@@ -66,7 +66,7 @@ func main() {
 	}
 	// Close the listener when the application closes.
 	defer l.Close()
-	log.Println("Listening on " + addr)
+	log.Println("mqtt: listening on " + addr)
 	for {
 		// Listen for an incoming connection.
 		conn, err := l.Accept()
