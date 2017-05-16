@@ -37,7 +37,7 @@ services:
     volumes:
       - /mosquitto/data
       - /mosquitto/log
-      - ./tests/mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./tests/mosquitto/config:/mosquitto/config
 
   activemq:
     image: rmohr/activemq:5.14.3-alpine
