@@ -58,6 +58,6 @@ services:
       - 61613:61613 # STOMP (since `rmohr/activemq:5.12.1`)
       - 6883:1883   # MQTT  (since `rmohr/activemq:5.12.1`)
       - 61614:61614 # WS    (since `rmohr/activemq:5.12.1`)
-    volumes:
+    #volumes:
       #- ./activemq/config:/opt/activemq/conf
       #- /var/activemq/data
