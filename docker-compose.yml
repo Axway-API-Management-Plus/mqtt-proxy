@@ -35,8 +35,8 @@ services:
       - 9883:1883   # MQTT
       - 9001:9001
     volumes:
-      - /mosquitto/data
-      - /mosquitto/log
+      #- /mosquitto/data
+      #- /mosquitto/log
       - ./tests/mosquitto/config:/mosquitto/config
 
   activemq:
@@ -50,4 +50,4 @@ services:
       - 61614:61614 # WS    (since `rmohr/activemq:5.12.1`)
     volumes:
       #- ./activemq/config:/opt/activemq/conf
-      - /var/activemq/data
+      #- /var/activemq/data
