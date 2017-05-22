@@ -22,5 +22,5 @@ if ! rabbitmqctl list_users | grep ^admin ; then
   rabbitmqctl set_user_tags admin administrator
   echo "---- admin password: $P"
 fi
-rabbitmqctl add_user user1 "user1"
+#rabbitmqctl add_user user1 "user1"
 tail -F /data/log/bunny@localhost.log

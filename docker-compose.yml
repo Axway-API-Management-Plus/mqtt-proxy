@@ -20,7 +20,7 @@ services:
   policy:
     build: tests/policy
     volumes:
-    - ./tests/policy:/usr/src/app
+    - ./tests/policy/app.js:/usr/src/app/app.js
 
   rabbitmq:
     build: tests/rabbitmq
