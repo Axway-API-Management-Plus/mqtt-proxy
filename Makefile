@@ -1,10 +1,13 @@
-VERSION := 0.0.3
+VERSION := 0.0.4
 NAME := mqtt-proxy
 DATE := $(shell date +'%Y-%M-%d_%H:%M:%S')
 BUILD := $(shell git rev-parse HEAD | cut -c1-8)
 LDFLAGS :=-ldflags "-s -w -X=main.Version=$(VERSION) -X=main.Build=$(BUILD) -X=main.Date=$(DATE)"
-IMAGE := jdavanne/$(NAME)
-.PHONY: docker all
+IMAGE := $(NAME)
+REGISTRY := registry.dctest.docker-cluster.axwaytest.net/internal
+PUBLISH := $(REGISTRY)/$(IMAGE)
+
+.PHONY: docker all certs deps
 
 all: build
 
@@ -47,7 +50,18 @@ docker-run:
 	docker-compose up
 
 docker:
-	docker build -t $(IMAGE):build .
-	docker run --rm $(IMAGE):build tar cz $(NAME) >$(NAME).tar.gz
-	docker build -t $(IMAGE) -f Dockerfile.small .
-	docker rmi $(IMAGE):build
+	docker build -t $(IMAGE) .
+
+certs:
+	openssl genrsa -out certs/server.key 2048
+	openssl req -new -x509 -sha256 -key certs/server.key -out certs/server.pem -days 3650
+
+docker-publish-all: docker-publish docker-publish-version
+
+docker-publish-version:
+	docker tag $(IMAGE) $(PUBLISH):$(VERSION)
+	docker push $(PUBLISH):$(VERSION)
+
+docker-publish: docker
+	docker tag $(IMAGE) $(PUBLISH):latest
+	docker push $(PUBLISH):latest

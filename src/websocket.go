@@ -4,8 +4,9 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"os"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/gorilla/websocket"
 )
@@ -53,7 +54,7 @@ func (r MqttReader) Write(data []byte) (int, error) {
 	return len(data), err
 }
 
-func wslisten() {
+func wsMqttPrepare() {
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  10240,
 		WriteBufferSize: 10240,
@@ -80,7 +81,24 @@ func wslisten() {
 		session := NewSession()
 		session.Stream(wsr)
 	})
+
+}
+func wsMqttListen() {
 	addr := httpHost + ":" + strconv.Itoa(httpPort)
 	log.Println("ws: listening " + addr)
-	http.ListenAndServe(addr, nil)
+	err := http.ListenAndServe(addr, nil)
+	if err != nil {
+		log.Errorln("ws: Error listening ws://"+addr, err.Error())
+		os.Exit(1)
+	}
+}
+
+func wssMqttListen() {
+	addr := httpsHost + ":" + strconv.Itoa(httpsPort)
+	log.Println("wss: listening wss://" + addr)
+	err := http.ListenAndServeTLS(addr, httpsCert, httpsKey, nil)
+	if err != nil {
+		log.Errorln("wss: Error listening wss://"+addr, err.Error())
+		os.Exit(1)
+	}
 }

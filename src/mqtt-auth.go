@@ -8,7 +8,7 @@ import (
 	"net"
 	"net/http"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/eclipse/paho.mqtt.golang/packets"
 )
 
@@ -129,7 +129,6 @@ func (session *Session) HandleConnect(way string, p *packets.ConnectPacket, r ne
 		log.Println("Session", session.id, way, "- CONNECT alter Password")
 		p.Password = []byte(resp.Password)
 	}
-
 	session.Username = p.Username
 	session.ClientIdentifier = p.ClientIdentifier
 

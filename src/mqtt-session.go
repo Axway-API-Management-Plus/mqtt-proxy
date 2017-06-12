@@ -1,12 +1,14 @@
 package main
 
 import (
+	"os"
 	"net"
 	"strconv"
 	"sync"
 	"sync/atomic"
+  "crypto/tls"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	uuid "github.com/satori/go.uuid"
 )
 
@@ -75,4 +77,54 @@ func (session *Session) Stream(conn net.Conn) {
 
 	atomic.AddInt32(&globalSessionCount, -1)
 	log.Println("Session", session.id, "Closed", conn.LocalAddr().String(), globalSessionCount)
+}
+
+func mqttAccept(l net.Listener) {
+	for {
+		// Listen for an incoming connection.
+		conn, err := l.Accept()
+		if err != nil {
+			log.Println("Error accepting: ", err.Error())
+			os.Exit(1)
+		}
+		// Handle connections in a new goroutine.
+		session := NewSession()
+		go session.Stream(conn)
+	}
+}
+
+func mqttListen() {
+	// Listen for incoming connections.
+	addr := host + ":" + strconv.Itoa(port)
+	l, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Println("mqtt: Error listening mqtt://" + addr, err.Error())
+		os.Exit(1)
+	}
+	// Close the listener when the application closes.
+	defer l.Close()
+	log.Println("mqtt: listening on mqtt://" + addr)
+
+	mqttAccept(l)
+}
+
+func mqttsListen() {
+	// Listen for incoming connections.
+	cert, err := tls.LoadX509KeyPair(mqttsCert, mqttsKey)
+  if err != nil {
+		log.Fatalf("mqtts: loadkeys: %s", err)
+		os.Exit(1)
+  }
+  config := tls.Config{Certificates: []tls.Certificate{cert}}
+	addr := mqttsHost + ":" + strconv.Itoa(mqttsPort)
+	l, err := tls.Listen("tcp", addr, &config)
+	if err != nil {
+		log.Println("mqtts: Error listening mqtts://" + addr, err.Error())
+		os.Exit(1)
+	}
+	// Close the listener when the application closes.
+	defer l.Close()
+	log.Println("mqtts: listening on mqtts://" + addr)
+
+	mqttAccept(l)
 }

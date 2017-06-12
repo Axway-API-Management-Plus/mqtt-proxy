@@ -1,19 +1,26 @@
 package main
 
 import (
-	"net"
-	"os"
-	"strconv"
-
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/namsral/flag"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
 
 var host string
 var port int
+
+var mqttsHost string
+var mqttsPort int
+var mqttsCert string
+var mqttsKey string
+
 var httpHost string
 var httpPort int
+var httpsHost string
+var httpsPort int
+var httpsCert string
+var httpsKey string
+
 var mqttBrokerHost string
 var mqttBrokerPort int
 var mqttBrokerUsername string
@@ -33,8 +40,17 @@ func main() {
 
 	flag.IntVar(&port, "port", 1883, "Specify the mqtt port to listen to.")
 	flag.StringVar(&host, "host", "0.0.0.0", "Specify the mqtt interface to listen to.")
+	flag.IntVar(&mqttsPort, "mqtts-port", 1884, "Specify the mqtts port to listen to.")
+	flag.StringVar(&mqttsHost, "mqtts-host", "0.0.0.0", "Specify the mqtts interface to listen to.")
+	flag.StringVar(&mqttsCert, "mqtts-cert", "certs/server.pem", "Specify the certificate used for mqtt TLS.")
+	flag.StringVar(&mqttsKey, "mqtts-key", "certs/server.key", "Specify the key used for mqtt TLS.")
+
 	flag.StringVar(&httpHost, "http-host", "0.0.0.0", "Listen http port (for http and websockets)")
 	flag.IntVar(&httpPort, "http-port", 8080, "Listen http port (for http and websockets)")
+	flag.StringVar(&httpsHost, "https-host", "0.0.0.0", "Listen https port (for https and websockets tls)")
+	flag.IntVar(&httpsPort, "https-port", 8081, "Listen https port (for https and websockets tls)")
+	flag.StringVar(&httpsCert, "https-cert", "certs/server.pem", "Specify the certificate used for https.")
+	flag.StringVar(&httpsKey, "https-key", "certs/server.key", "Specify the key used for https.")
 
 	flag.IntVar(&mqttBrokerPort, "mqtt-broker-port", 1883, "Specify the port of the mqtt server")
 	flag.StringVar(&mqttBrokerHost, "mqtt-broker-host", "0.0.0.0", "Specify the host the mqtt server.")
@@ -55,27 +71,10 @@ func main() {
 		log.Println("auth : no auth url configured : bypassing!")
 	}
 
-	go wslisten()
+	wsMqttPrepare()
+	go wsMqttListen()
+	go wssMqttListen()
 
-	// Listen for incoming connections.
-	addr := host + ":" + strconv.Itoa(port)
-	l, err := net.Listen("tcp", addr)
-	if err != nil {
-		log.Println("Error listening:", err.Error())
-		os.Exit(1)
-	}
-	// Close the listener when the application closes.
-	defer l.Close()
-	log.Println("mqtt: listening on " + addr)
-	for {
-		// Listen for an incoming connection.
-		conn, err := l.Accept()
-		if err != nil {
-			log.Println("Error accepting: ", err.Error())
-			os.Exit(1)
-		}
-		// Handle connections in a new goroutine.
-		session := NewSession()
-		go session.Stream(conn)
-	}
+	go mqttListen()
+	mqttsListen()
 }

@@ -4,6 +4,7 @@ services:
   sut:
     build: ./tests/test
     command: npm test
+    tty: true
     depends_on:
     - mqtt-proxy
     - policy
@@ -28,12 +29,12 @@ services:
     - policy
 
   policy:
-    build: tests/policy
+    build: ./tests/policy
     volumes:
-    - ./tests/policy:/usr/src/app
+    - ./tests/policy/app.js:/usr/src/app/app.js
 
   rabbitmq:
-    build: tests/rabbitmq
+    build: ./tests/rabbitmq
     ports:
       - 5672        # AMQP
       - 15672:15672 # UI
