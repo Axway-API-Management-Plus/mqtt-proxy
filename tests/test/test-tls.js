@@ -1,4 +1,4 @@
-var mqtt = require('mqtt')
+const mqtt = require('mqtt')
 
 function expect(a, b) {
     if (a != b) {
@@ -19,14 +19,15 @@ class Once {
   }
 }
 
-const MQTT_BROKER = 'mqtt://mqtt-proxy:1883'
-const MQTT_BROKER_BAD = 'mqtts://mqtt-proxy:1883'
 
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
-describe('mqtt-proxy (unsecure)', () => {
+const MQTT_BROKER = "mqtts://mqtt-proxy:1884"
 
-    it('normal operation (unsecure)', (done) => {
-      const client = mqtt.connect(MQTT_BROKER, { username: "guest", password: "goodpass" })
+describe('mqtt-proxy (TLS)', () => {
+
+    it('normal operation (TLS)', (done) => {
+      const client = mqtt.connect(MQTT_BROKER, { username: "guest", password: "goodpass", rejectUnauthorized: false })
       const once = new Once(done)
       client.on('connect', function () {
         client.subscribe('presence')
@@ -40,33 +41,10 @@ describe('mqtt-proxy (unsecure)', () => {
             return once.done(new Error("error" + e))
         }
         once.done()
+        client.close()
       })
       client.on('error', function (err) {
-        once.done(err)
-      })
-      client.on('close', function (err) {
-        once.done(err)
-      })
-    })
-
-    it.skip('bad protocol', (done) => {
-      const client = mqtt.connect(MQTT_BROKER_BAD, { username: "guest", password: "goodpass" })
-      let once = new Once(done)
-      client.on('connect', function () {
-        client.subscribe('presence')
-        client.publish('presence', 'Hello mqtt')
-      })
-      client.on('message', function (topic, message) {
-        try {
-            expect(topic, 'presence')
-            expect(message.toString(), 'Hello mqtt')
-        } catch (e) {
-            return once.done(new Error("error" + e))
-        }
-        done(new Error("Should not connect!"))
-      })
-      client.on('error', function (err) {
-          once.done()
+          once.done(err)
       })
       client.on('close', function (err) {
           once.done(err)
@@ -74,7 +52,7 @@ describe('mqtt-proxy (unsecure)', () => {
     })
 
     it('bad user/password', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "guest", password: "badpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "guest", password: "badpass", rejectUnauthorized: false })
         client.on('connect', function () {
             done(new Error("Should not connect"))
         })
@@ -84,7 +62,7 @@ describe('mqtt-proxy (unsecure)', () => {
     })
 
     it('bad topic on subscribe', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "bad_topic_on_subscribe", password: "goodpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "bad_topic_on_subscribe", password: "goodpass", rejectUnauthorized: false })
         client.on('connect', function () {
             client.subscribe('bad_topic_on_subscribe')
             client.publish('bad_topic_on_subscribe', 'Hello mqtt')
@@ -98,7 +76,7 @@ describe('mqtt-proxy (unsecure)', () => {
     })
 
     it('bad topic on publish', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "bad_topic_on_publish", password: "goodpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "bad_topic_on_publish", password: "goodpass", rejectUnauthorized: false })
         let once = new Once(done)
         client.on('connect', function () {
             client.subscribe('bad_topic_on_publish')
@@ -113,7 +91,7 @@ describe('mqtt-proxy (unsecure)', () => {
     })
 
     it('bad topic on receive', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "bad_topic_on_receive", password: "goodpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "bad_topic_on_receive", password: "goodpass", rejectUnauthorized: false })
         client.on('connect', function () {
             client.subscribe('bad_topic_on_receive')
             client.publish('bad_topic_on_receive', 'Hello mqtt')
@@ -127,7 +105,7 @@ describe('mqtt-proxy (unsecure)', () => {
     })
 
     it('rename topic on subscribe', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "rename_topic_on_subscribe", password: "goodpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "rename_topic_on_subscribe", password: "goodpass", rejectUnauthorized: false })
         let once = new Once(done)
         client.on('connect', function () {
             client.subscribe('rename_topic_on_subscribe')
@@ -146,7 +124,7 @@ describe('mqtt-proxy (unsecure)', () => {
     })
 
     it('rename topic on publish', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "rename_topic_on_publish", password: "goodpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "rename_topic_on_publish", password: "goodpass", rejectUnauthorized: false })
         const once = new Once(done)
         client.on('connect', function () {
             client.subscribe('renamed_topic_on_publish')
@@ -165,7 +143,7 @@ describe('mqtt-proxy (unsecure)', () => {
     })
 
     it('rename topic on receive', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "rename_topic_on_receive", password: "goodpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "rename_topic_on_receive", password: "goodpass", rejectUnauthorized: false })
         const once = new Once(done)
         client.on('connect', function () {
             client.subscribe('rename_topic_on_receive')
@@ -184,7 +162,7 @@ describe('mqtt-proxy (unsecure)', () => {
     })
 
     it('alter message on publish', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "alter_message_on_publish", password: "goodpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "alter_message_on_publish", password: "goodpass", rejectUnauthorized: false })
         const once = new Once(done)
         client.on('connect', function () {
             client.subscribe('alter_message_on_publish')
@@ -202,7 +180,7 @@ describe('mqtt-proxy (unsecure)', () => {
         })
     })
     it('alter message on receive', (done) => {
-        const client = mqtt.connect(MQTT_BROKER, { username: "alter_message_on_receive", password: "goodpass" })
+        const client = mqtt.connect(MQTT_BROKER, { username: "alter_message_on_receive", password: "goodpass", rejectUnauthorized: false })
         const once = new Once(done)
         client.on('connect', function () {
             client.subscribe('alter_message_on_receive')

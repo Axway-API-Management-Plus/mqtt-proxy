@@ -1,15 +1,15 @@
 package main
 
 import (
-	"os"
+	"crypto/tls"
 	"net"
+	"os"
 	"strconv"
 	"sync"
 	"sync/atomic"
-  "crypto/tls"
 
-	log "github.com/sirupsen/logrus"
 	uuid "github.com/satori/go.uuid"
+	log "github.com/sirupsen/logrus"
 )
 
 type Session struct {
@@ -95,10 +95,10 @@ func mqttAccept(l net.Listener) {
 
 func mqttListen() {
 	// Listen for incoming connections.
-	addr := host + ":" + strconv.Itoa(port)
+	addr := mqttHost + ":" + strconv.Itoa(mqttPort)
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Println("mqtt: Error listening mqtt://" + addr, err.Error())
+		log.Println("mqtt: Error listening mqtt://"+addr, err.Error())
 		os.Exit(1)
 	}
 	// Close the listener when the application closes.
@@ -111,15 +111,15 @@ func mqttListen() {
 func mqttsListen() {
 	// Listen for incoming connections.
 	cert, err := tls.LoadX509KeyPair(mqttsCert, mqttsKey)
-  if err != nil {
+	if err != nil {
 		log.Fatalf("mqtts: loadkeys: %s", err)
 		os.Exit(1)
-  }
-  config := tls.Config{Certificates: []tls.Certificate{cert}}
+	}
+	config := tls.Config{Certificates: []tls.Certificate{cert}}
 	addr := mqttsHost + ":" + strconv.Itoa(mqttsPort)
 	l, err := tls.Listen("tcp", addr, &config)
 	if err != nil {
-		log.Println("mqtts: Error listening mqtts://" + addr, err.Error())
+		log.Println("mqtts: Error listening mqtts://"+addr, err.Error())
 		os.Exit(1)
 	}
 	// Close the listener when the application closes.

@@ -2,9 +2,9 @@ package main
 
 import (
 	"net/http"
+	"os"
 	"strconv"
 	"time"
-	"os"
 
 	log "github.com/sirupsen/logrus"
 
@@ -81,8 +81,8 @@ func wsMqttPrepare() {
 		session := NewSession()
 		session.Stream(wsr)
 	})
-
 }
+
 func wsMqttListen() {
 	addr := httpHost + ":" + strconv.Itoa(httpPort)
 	log.Println("ws: listening " + addr)

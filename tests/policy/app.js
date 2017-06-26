@@ -1,7 +1,17 @@
-var express = require('express')
-var app = express()
-var bodyParser = require('body-parser')
+const express = require('express')
+const fs = require('fs')
+const http = require('http')
+const https = require('https')
+const privateKey  = fs.readFileSync('./certs/server.key', 'utf8')
+const certificate = fs.readFileSync('./certs/server.pem', 'utf8')
+
+const app = express()
+const bodyParser = require('body-parser')
 app.use(bodyParser.json())
+
+process.on('SIGTERM', function () {
+    process.exit(0);
+});
 
 app.post('/mqtt/connect', function (req, res) {
   console.log("/mqtt/connect", req.body)
@@ -59,6 +69,13 @@ app.post('/mqtt/receive', function (req, res) {
   res.send(resp)
 })
 
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!')
+const httpServer = http.createServer(app)
+const httpsServer = https.createServer({key: privateKey, cert: certificate}, app)
+
+httpServer.listen(3000, () => {
+  console.log('Example app listening on port 3000 for http!')
+})
+
+httpsServer.listen(3001, () => {
+  console.log('Example app listening on port 3001 for https!')
 })

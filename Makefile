@@ -20,7 +20,8 @@ dev:
 docker-test:
 	docker-compose -f docker-compose.test.yml down
 	docker-compose -f docker-compose.test.yml build
-	docker-compose -f docker-compose.test.yml run sut
+	docker-compose -f docker-compose.test.yml run sut  || (docker-compose -f docker-compose.test.yml logs -t | sort -k 3 ; docker-compose -f docker-compose.test.yml down ; exit 1)
+	docker-compose -f docker-compose.test.yml down
 
 docker-test-logs:
 	docker-compose -f docker-compose.test.yml logs
@@ -52,9 +53,19 @@ docker-run:
 docker:
 	docker build -t $(IMAGE) .
 
-certs:
+certs: certs-proxy certs-policy
+
+certs-proxy:
 	openssl genrsa -out certs/server.key 2048
-	openssl req -new -x509 -sha256 -key certs/server.key -out certs/server.pem -days 3650
+	openssl req -new -x509 -sha256 -key certs/server.key -out certs/server.pem -days 3650 -subj "/C=FR/ST=Paris/L=La Defense/O=Axway/CN=mqtt-proxy"
+	openssl x509 -text -noout -in certs/server.pem
+	cp certs/server.pem tests/test/certs/mqtt-proxy.pem
+
+certs-policy:
+	openssl genrsa -out tests/policy/certs/server.key 2048
+	openssl req -new -x509 -sha256 -key tests/policy/certs/server.key -out tests/policy/certs/server.pem -days 3650 -subj "/C=FR/ST=Paris/L=La Defense/O=Axway/CN=policy"
+	openssl x509 -text -noout -in tests/policy/certs/server.pem
+	cp tests/policy/certs/server.pem certs/policy.pem
 
 docker-publish-all: docker-publish docker-publish-version
 

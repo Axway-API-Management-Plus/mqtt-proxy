@@ -8,8 +8,8 @@ import (
 	"net"
 	"net/http"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/eclipse/paho.mqtt.golang/packets"
+	log "github.com/sirupsen/logrus"
 )
 
 type MQTTConnect struct {
@@ -61,12 +61,6 @@ func (session *Session) request(way string, uri string, request interface{}, res
 		return 0, err
 	}
 
-	tr := &http.Transport{
-	//TLSClientConfig:    &tls.Config{RootCAs: pool},
-	//DisableCompression: true,
-	}
-	client := &http.Client{Transport: tr}
-
 	req, err := http.NewRequest("POST", authURL+uri, nil)
 	if err != nil {
 		return 0, err
@@ -77,7 +71,7 @@ func (session *Session) request(way string, uri string, request interface{}, res
 	//req.Header.Add("Authorization", "")
 	req.Body = ioutil.NopCloser(bytes.NewReader(jData))
 
-	resp, err := client.Do(req)
+	resp, err := authClient.Do(req)
 	if err != nil {
 		return 0, err
 	}
