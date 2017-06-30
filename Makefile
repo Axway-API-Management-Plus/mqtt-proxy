@@ -53,6 +53,16 @@ docker-run:
 docker:
 	docker build -t $(IMAGE) .
 
+docker-publish-all: docker-publish docker-publish-version
+
+docker-publish-version:
+	docker tag $(IMAGE) $(PUBLISH):$(VERSION)
+	docker push $(PUBLISH):$(VERSION)
+
+docker-publish: docker
+	docker tag $(IMAGE) $(PUBLISH):latest
+	docker push $(PUBLISH):latest
+
 certs: certs-proxy certs-policy
 
 certs-proxy:
@@ -66,13 +76,3 @@ certs-policy:
 	openssl req -new -x509 -sha256 -key tests/policy/certs/server.key -out tests/policy/certs/server.pem -days 3650 -subj "/C=FR/ST=Paris/L=La Defense/O=Axway/CN=policy"
 	openssl x509 -text -noout -in tests/policy/certs/server.pem
 	cp tests/policy/certs/server.pem certs/policy.pem
-
-docker-publish-all: docker-publish docker-publish-version
-
-docker-publish-version:
-	docker tag $(IMAGE) $(PUBLISH):$(VERSION)
-	docker push $(PUBLISH):$(VERSION)
-
-docker-publish: docker
-	docker tag $(IMAGE) $(PUBLISH):latest
-	docker push $(PUBLISH):latest
