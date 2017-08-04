@@ -1,4 +1,8 @@
-# MQTT-Proxy
+# Description 
+Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,...) on MQTT protocol for any MQTT broker
+
+## API Management Version Compatibilty
+This artefact can be used with every API Management Plus version
 
 ## Start
 Command Line
