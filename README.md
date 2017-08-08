@@ -4,68 +4,31 @@ Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,..
 ## API Management Version Compatibilty
 This artefact can be used with every API Management Plus version
 
-## Start
-Command Line
-```
-Usage of ./mqtt-proxy:
-  -auth-ca-file string
-    	PEM encoded CA s certificate file for the authz/authn service
-  -auth-url string
-    	URL to the authz/authn service
-  -http-enable
-    	Enable http protocol (default true)
-  -http-host string
-    	Listen http port (for http and websockets) (default "0.0.0.0")
-  -http-port int
-    	Listen http port (for http and websockets) (default 8080)
-  -https-cert string
-    	Certificate used for https. (default "certs/server.pem")
-  -https-enable
-    	Enable https protocol (default true)
-  -https-host string
-    	Listen https port (for https and websockets tls) (default "0.0.0.0")
-  -https-key string
-    	Key used for https. (default "certs/server.key")
-  -https-port int
-    	Listen https port (for https and websockets tls) (default 8081)
-  -mqtt-broker-host string
-    	Host the mqtt server. (default "0.0.0.0")
-  -mqtt-broker-password string
-    	Password the mqtt server.
-  -mqtt-broker-port int
-    	Port of the mqtt server (default 1883)
-  -mqtt-broker-username string
-    	Username of the mqtt server. Reuse incoming one if empty
-  -mqtt-enable
-    	Enable mqtt protocol (default true)
-  -mqtt-host string
-    	Mqtt interface to listen to. (default "0.0.0.0")
-  -mqtt-port int
-    	Mqtt port to listen to. (default 1883)
-  -mqtts-cert string
-    	Certificate used for mqtt TLS. (default "certs/server.pem")
-  -mqtts-enable
-    	Enable mqtts protocol (default true)
-  -mqtts-host string
-    	Mqtts interface to listen to. (default "0.0.0.0")
-  -mqtts-key string
-    	Key used for mqtt TLS. (default "certs/server.key")
-  -mqtts-port int
-    	Mqtts port to listen to. (default 8883)
-```
+## Prerequisites
+- docker 17.06 (and docker-compose)
+- MQTT Broker   : activemq / rabbitmq / mosquitto / ...
+- Policy Engine : Axway API Gateway or custom engine (see [./tests/policy] )
 
-Test full environment with docker
-```
-docker-compose -f docker-compose.yml up
-```
-
-## Configure
+## Configure your policy engine
 When AUTH_URL is set, every mqtt packet (CONNECT, SUBSCRIBE, PUBLISH in/out) are check against a [AUTH_API](./AUTH_API.md)
 
-## Quickstart
+See Axway API Gateway samples for mqtt in : `./api-gateway-policies/mqtt-proxy-apigw-policy.xml`
+In API Gateway Policy Studio, please use Import Configuration Fragment to upload the policy
+
+## Command-line / Environment options
 ```sh
-  docker run -it --rm mqtt-proxy davinci1976/mqtt-proxy mqtt-proxy [parameters... see above]
-  docker run -it --rm mqtt-proxy davinci1976/mqtt-proxy mqtt-proxy --http-enable=false --mqtt-enable=false
+docker run -it --rm mqtt-proxy davinci1976/mqtt-proxy mqtt-proxy --help
+```
+
+## Quickstart
+### Standalone (mqtt-proxy only)
+```sh
+   docker run -it --rm davinci1976/mqtt-proxy mqtt-proxy --auth-url http://apigtw:8065/mqtt --mqtt-broker-host my-mqtt-broker
+```
+
+### Full environment (mqtt-proxy + broker + custom policy engine)
+```sh
+docker-compose -f docker-compose.yml up
 ```
 
 ## Build standalone binary:
@@ -87,7 +50,6 @@ make docker
 ```
 
 ## Test
-
 ```
 make docker-test
 ```
@@ -103,13 +65,14 @@ make docker-test
   - rename `--mqtt-*` variables to `--mqtt-broker-*`
 
 
-## Todo
-- Broker routing : Configurable Route to the mqtt server on CONNECT
-- TLS support broker
-- TLS : more TLS options (algo, ....)
-- HTTP : Post support
-- Cache the publish/receive/subscribe policy check
-
+## Limitations/Caveats
+- No broker routing : Only one broker per mqtt-proxy instance
+  - no configurable routes
+- No TLS support for broker
+- No additional TLS options supported between the client and mqtt-proxy (algo, ....)
+- No HTTP API to publish a MQTT message on a topic `/topics/:topic?qos=:qos`
+   (like http://docs.aws.amazon.com/iot/latest/developerguide/protocols.html#http)
+- No cache for publish/receive/subscribe policy check
 
 ## Contributing
 

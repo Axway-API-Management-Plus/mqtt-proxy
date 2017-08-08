@@ -1,0 +1,2814 @@
+<entityStoreData xmlns="http://www.vordel.com/2005/06/24/entityStore">
+<metaInfo flags="138">
+	<exportRoots>
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+			</key>
+		</key>
+		<key type='NetService'>
+			<id field='name' value='Service'/>
+			<key type='HTTP'>
+				<id field='name' value='Default Services'/>
+				<key type='XMLFirewall'>
+					<id field='uriprefix' value='/mqtt/receive'/>
+					<id field='httpMethod' value='*'/>
+				</key>
+			</key>
+		</key>
+		<key type='NetService'>
+			<id field='name' value='Service'/>
+			<key type='HTTP'>
+				<id field='name' value='Default Services'/>
+				<key type='XMLFirewall'>
+					<id field='uriprefix' value='/mqtt/subscribe'/>
+					<id field='httpMethod' value='*'/>
+				</key>
+			</key>
+		</key>
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+			</key>
+		</key>
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+			</key>
+		</key>
+		<key type='NetService'>
+			<id field='name' value='Service'/>
+			<key type='HTTP'>
+				<id field='name' value='Default Services'/>
+				<key type='XMLFirewall'>
+					<id field='uriprefix' value='/mqtt/connect'/>
+					<id field='httpMethod' value='*'/>
+				</key>
+			</key>
+		</key>
+		<key type='NetService'>
+			<id field='name' value='Service'/>
+			<key type='HTTP'>
+				<id field='name' value='Default Services'/>
+				<key type='XMLFirewall'>
+					<id field='uriprefix' value='/mqtt/publish'/>
+					<id field='httpMethod' value='*'/>
+				</key>
+			</key>
+		</key>
+		<key type='ESConfiguration'>
+			<id field='name' value='Entity Store Configuration'/>
+		</key>
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+			</key>
+		</key>
+	</exportRoots>
+	<typeVersions>
+		<type name="AttributeAuthnFilter" version="2"/>
+		<type name="AttributeCompare" version="1"/>
+		<type name="ChangeMessageFilter" version="0"/>
+		<type name="CircuitContainer" version="1"/>
+		<type name="CircuitReference" version="2"/>
+		<type name="CompareAttributeFilter" version="0"/>
+		<type name="ConversionFilter" version="0"/>
+		<type name="ESConfiguration" version="21"/>
+		<type name="Entity" version="0"/>
+		<type name="FalseFilter" version="0"/>
+		<type name="Filter" version="5"/>
+		<type name="FilterCircuit" version="4"/>
+		<type name="HTTP" version="5"/>
+		<type name="JSONAddNodeFilter" version="0"/>
+		<type name="JSONErrorFilter" version="0"/>
+		<type name="JSONPath" version="1"/>
+		<type name="JSONPathFilter" version="0"/>
+		<type name="JavaProcess" version="0"/>
+		<type name="LoadableModule" version="2"/>
+		<type name="NativeModule" version="0"/>
+		<type name="NetService" version="5"/>
+		<type name="PortableCircuitReference" version="0"/>
+		<type name="Process" version="0"/>
+		<type name="Reflector" version="0"/>
+		<type name="RootChild" version="0"/>
+		<type name="ServiceContextFilter" version="5"/>
+		<type name="SetHTTPStatusCode" version="0"/>
+		<type name="SocketProtocol" version="1"/>
+		<type name="SoftCircuitReference" version="0"/>
+		<type name="TraceFilter" version="3"/>
+		<type name="URIHandler" version="5"/>
+		<type name="XMLFirewall" version="9"/>
+	</typeVersions>
+	<realizedTypes><![CDATA[
+<entityStoreData>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Entity" name="RootChild"/>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="RootChild" name="LoadableModule">
+        <constant name="_version" type="integer" value="2"/>
+        <constant name="loadorder" type="integer" value="1000000"/>
+        <field cardinality="?" name="classloader" type="^ClassLoader"/>
+
+        </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="LoadableModule" name="NativeModule">
+        <constant name="_version" type="integer" value="0"/>
+                <constant name="class" type="string" value="com.vordel.dwe.NativeModule"/>
+        </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="NativeModule" name="SocketProtocol">
+        <constant name="_version" type="integer" value="1"/>
+        <componentType name="Interface"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SocketProtocol" name="HTTP">
+        <constant name="_version" type="integer" value="5"/>
+        <constant name="class" type="string" value="com.vordel.dwe.http.HTTP"/>
+        <componentType name="URIHandler"/>
+        <componentType name="VirtualHost"/>
+        <field cardinality="1" default="" isKey="true" name="name" type="string"/> <!--  ES needs name -->
+        <field cardinality="?" default="-1" name="corsProfile" type="^CORS"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="RootChild" name="ESConfiguration">
+        <constant name="_version" type="integer" value="21"/>
+        <!--
+            Give this singleton a key.
+        -->
+        <field isKey="true" name="name" type="string"/>
+        <!-- 
+            We use this field to verify that the passphrase for the 
+            encryped data is synchronized between the server and client, and
+            between multiple invocations of the client
+        -->
+        <field name="passphraseTest" type="encrypted"/>
+        <field name="version" type="string"/>
+        <!-- The product key should never change for the lifetime of the product -->
+        <field name="productKey" type="string"/>
+        <field cardinality="?" name="gitrev" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="RootChild" name="Process">
+        <constant name="_version" type="integer" value="0"/> <!-- Common features to all processes created by Vordel software. -->
+		<field isKey="true" name="name" type="string"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Process" name="JavaProcess">
+        <constant name="_version" type="integer" value="0"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="JavaProcess" name="NetService">
+    <constant name="_version" type="integer" value="5"/>
+    <!-- Static type-field. -->
+    <constant name="executableImage" type="string" value="vshell"/>
+    <componentType name="LoadableModule"/>
+    <componentType name="ClassLoader"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="RootChild" name="CircuitContainer">
+    <constant name="_version" type="integer" value="1"/>
+    <componentType cardinality="*" name="FilterCircuit"/>
+    <componentType cardinality="*" name="CircuitContainer"/>
+    <componentType cardinality="*" name="MVProperty"/>
+    <field isKey="true" name="name" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="RootChild" name="FilterCircuit">
+        <constant name="_version" type="integer" value="4"/>
+		<componentType cardinality="*" name="Filter"/>
+		<componentType cardinality="1" name="BoundCircuit"/>
+		<componentType cardinality="*" name="Property"/>
+		<field cardinality="1" name="start" type="@Filter"/>
+		<field cardinality="?" name="fault" type="@Filter"/>
+		<field isKey="true" name="name" type="string"/>
+		<field cardinality="1" default="3" name="logMask" type="integer"/>
+
+		<field cardinality="?" name="description" type="string"/>		
+		<field cardinality="1" name="category" type="@PolicyCategory">
+            <defaultRef>
+                <key type="PolicyCategoryGroup">
+                  <id field="name" value="Policy Categories"/>
+                  <key type="PolicyCategory">
+                      <id field="name" value="miscellaneous"/>
+                  </key>
+                </key>
+            </defaultRef>
+        </field>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Entity" name="URIHandler">
+        <constant name="_version" type="integer" value="5"/>
+        <constant name="class" type="string" value="com.vordel.dwe.http.URIHandler"/>
+		<field cardinality="1" default="" isKey="true" name="uriprefix" type="string"/>
+        <field cardinality="1" default="*" isKey="true" name="httpMethod" type="string"/>
+    	<field cardinality="1" default="LONGEST" name="pathMatching" type="string"/> <!-- EXACT, LONGEST -->
+        <field cardinality="?" default="-1" name="corsProfile" type="^CORS"/>
+    	<field cardinality="1" default="HTTP" name="corsUsage" type="string"/> <!-- HTTP, URIHANDLER -->
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="URIHandler" name="XMLFirewall">
+    <constant name="_version" type="integer" value="9"/>
+    <constant name="class" type="string" value="com.vordel.dwe.http.HTTPPlugin"/>
+    <constant name="loadorder" type="integer" value="2000000"/>
+    <componentType cardinality="*" name="CircuitReference"/>
+    <componentType cardinality="*" name="URIHandler"/>
+    <field default="1" name="evaluate" type="boolean"/>
+    <field cardinality="1" name="filterCircuit" type="^FilterCircuit"/>
+    <field cardinality="1" default="2" name="logMask" type="integer"/>
+    <field cardinality="1" default="0" name="payloadMask" type="integer"/>
+    <field cardinality="1" default="1" name="enabled" type="boolean"/>
+    <field cardinality="1" default="0" name="enableAccessLogging" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Entity" name="CircuitReference">
+    <constant name="_version" type="integer" value="2"/>
+    <componentType cardinality="*" name="Property"/>
+    <field isKey="true" name="name" type="string"/>
+    <field cardinality="1" name="priority" type="integer"/>
+    <field cardinality="?" name="circuitPK" type="^FilterCircuit"/>
+    <!-- The evaluation of the referenced circuit is conditional. By default evaluation is enabled. -->
+    <field cardinality="1" default="true" name="evaluate" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="CircuitReference" name="SoftCircuitReference">
+    <constant name="_version" type="integer" value="0"/>
+    <!-- 
+      Override the circuitPK reference, making it a string value which can be interpreted as a reference 
+      at run time.
+    -->
+    <field cardinality="?" name="circuitPK" type="string"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="CircuitReference" name="PortableCircuitReference">
+    <constant name="_version" type="integer" value="0"/>
+    <field cardinality="?" name="circuitPK" type="^FilterCircuit"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="false" extends="Entity" name="AttributeCompare">
+      <constant name="_version" type="integer" value="1"/>
+      <field isKey="true" name="attrName" type="string"/>
+      <field default="CONTAINS" isKey="true" name="matchType" type="string"/>
+      <field isKey="true" name="expression" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="false" extends="Entity" name="JSONPath">
+        <constant name="_version" type="integer" value="1"/>
+        <field name="attributeName" type="string"/>
+        <field isKey="true" name="expression" type="string"/>
+        <field default="java.util.List" name="unmarshalType" type="string"/>
+        <field default="false" name="failOnError" type="boolean"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Entity" name="Filter">
+        <constant name="_version" type="integer" value="5"/>
+        <field cardinality="?" name="successNode" type="@Filter"/>
+        <field cardinality="?" name="failureNode" type="@Filter"/>
+        <field isKey="true" name="name" type="string"/>
+        <field cardinality="1" default="2" name="logMask" type="integer"/>
+        <field cardinality="1" default="Filter aborted due to exception" name="logFatal" type="string"/>
+        <field cardinality="1" default="Filter failed" name="logFailure" type="string"/>
+        <field cardinality="1" default="Filter passed" name="logSuccess" type="string"/>
+        <field cardinality="1" name="category" type="@Category">
+            <defaultRef>
+                <key type="CategoryGroup">
+                  <id field="name" value="Filter Categories"/>
+                  <key type="Category">
+                      <id field="name" value="miscellaneous"/>
+                  </key>
+                </key>
+            </defaultRef>
+        </field>
+      <field cardinality="1" default="0" name="abortProcessingOnLogError" type="boolean"/>
+      <field cardinality="1" default="SERVICE" name="logMaskType" type="string"/>
+      <field cardinality="*" name="classloader" type="^ClassLoader"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="ServiceContextFilter">
+      <constant name="_version" type="integer" value="5"/>
+      <constant name="class" type="string" value="com.vordel.circuit.ws.ServiceContextFilter"/>
+      <field cardinality="1" default="" name="serviceName" type="string"/>
+      <field cardinality="1" default="3" name="metricsMask" type="integer"/>
+      <field cardinality="1" default="authentication.subject.id" name="clientAttributeName" type="string"/>
+      <field cardinality="1" default="0" name="compositeContext" type="boolean"/>
+  </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="JSONAddNodeFilter">
+        <constant name="_version" type="integer" value="0"/>
+        <constant name="class" type="string" value="com.vordel.circuit.json.JSONAddNodeFilter"/>
+        <field name="expression" type="string"/>
+        <field cardinality="1" default="0" name="expressionType" type="integer"/> 	
+        <field cardinality="1" default="0" name="insertLocationType" type="integer"/> 
+        <field name="objectFieldName" type="string"/>
+        <field name="content" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" abstract="true" extends="Filter" name="ConversionFilter">
+        <constant name="_version" type="integer" value="0"/>
+		<field cardinality="?" name="outputContentType" type="string"/> 
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="ConversionFilter" name="ChangeMessageFilter">
+        <constant name="_version" type="integer" value="0"/>
+		<constant name="class" type="string" value="com.vordel.circuit.conversion.ChangeMessageFilter"/>
+		<field cardinality="1" default="" name="body" type="string"/>	
+         </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="CompareAttributeFilter">
+        <constant name="_version" type="integer" value="0"/>
+        <constant name="class" type="string" value="com.vordel.circuit.attribute.CompareAttributeFilter"/>
+        <componentType name="AttributeCompare"/>
+        <field default="MATCH_ALL" name="matchingRule" type="string"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="JSONErrorFilter">
+        <constant name="_version" type="integer" value="0"/>
+	<constant name="class" type="string" value="com.vordel.circuit.faulthandlers.json.JSONErrorFilter"/>
+	    <field cardinality="1" default="0" name="showStack" type="boolean"/>	
+	    <field cardinality="1" default="0" name="showPath" type="boolean"/>	
+            <field cardinality="1" default="0" name="showAttributes" type="boolean"/>	
+            <field cardinality="1" default="0" name="showDetailedReason" type="boolean"/>	
+            <field cardinality="1" default="${circuit.failure.reason}" name="faultString" type="string"/>
+            <field cardinality="1" default="500" name="httpResponseStatus" type="integer"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="SetHTTPStatusCode">
+        <constant name="_version" type="integer" value="0"/>
+		<constant name="class" type="string" value="com.vordel.circuit.net.SetHTTPStatusFilter"/>
+        <field cardinality="1" default="200" name="httpResponseStatus" type="integer"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="SetHTTPStatusCode" name="Reflector">
+        <constant name="_version" type="integer" value="0"/>
+		<constant name="class" type="string" value="com.vordel.circuit.net.ReflectFilter"/>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="AttributeAuthnFilter">
+        <constant name="_version" type="integer" value="2"/>
+		<constant name="class" type="string" value="com.vordel.circuit.authn.AttributeAuthnFilter"/>
+		<field cardinality="1" default="${authentication.subject.id}" name="username" type="string"/>
+ 		<field cardinality="1" default="${authentication.subject.password}" name="password" type="string"/>
+ 		<field cardinality="1" name="credentialFormat" type="string"/>
+		<field cardinality="1" name="repository" type="^AuthnRepositoryBase"/>
+	    <field cardinality="1" name="category" type="@Category">
+          <defaultRef>
+            <key type="CategoryGroup">
+              <id field="name" value="Filter Categories"/>
+              <key type="Category">
+                <id field="name" value="authentication"/>
+              </key>
+            </key>
+          </defaultRef>
+        </field>
+	</entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="JSONPathFilter">
+        <constant name="_version" type="integer" value="0"/>
+        <constant name="class" type="string" value="com.vordel.circuit.json.JSONPathFilter"/>
+        <componentType name="JSONPath"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="TraceFilter">
+        <constant name="_version" type="integer" value="3"/>
+		    <constant name="class" type="string" value="com.vordel.circuit.basic.TraceFilter"/>
+        <field cardinality="?" name="traceMsg" type="string"/>
+        <field cardinality="1" default="5" name="traceLevel" type="integer"/>
+        <field cardinality="1" default="1" name="traceAttributes" type="boolean"/>
+        <field cardinality="1" default="0" name="traceBody" type="boolean"/>
+        <field cardinality="1" default="0" name="doIndent" type="boolean"/>
+    </entityType>
+<entityType xmlns="http://www.vordel.com/2005/06/24/entityStore" extends="Filter" name="FalseFilter">
+        <constant name="_version" type="integer" value="0"/>
+		<constant name="class" type="string" value="com.vordel.circuit.basic.False"/>
+	</entityType>
+</entityStoreData>
+	]]></realizedTypes>
+</metaInfo>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="FilterCircuit">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+	</key>
+	<fval name="category"><value contentType="reference">
+		<key type='PolicyCategoryGroup'>
+			<id field='name' value='Policy Categories'/>
+			<key type='PolicyCategory'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="description"><value></value></fval>
+	<fval name="logMask"><value>3</value></fval>
+	<fval name="name"><value>MQTT-Subscribe</value></fval>
+	<fval name="start"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='JSONPathFilter'>
+					<id field='name' value='JSON Path'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ChangeMessageFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="body"><value>{ message: &quot;bad topic on subscribe&quot;}</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Failed in setting the message</value></fval>
+	<fval name="logFatal"><value>Error in setting the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Success in setting the message</value></fval>
+	<fval name="name"><value>Set ERROR Message</value></fval>
+	<fval name="outputContentType"><value>application/json</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect ERROR Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='ChangeMessageFilter'>
+					<id field='name' value='Set ERROR Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare Topic to check if &quot;bad topic&quot; send</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare Topic to check for &quot;RENAME&quot;'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare Topic to check if &quot;bad topic&quot; send'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.topic}</value></fval>
+	<fval name="expression"><value>bad_topic_on_subscribe</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ServiceContextFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="clientAttributeName"><value>authentication.subject.id</value></fval>
+	<fval name="compositeContext"><value>0</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="metricsMask"><value>1</value></fval>
+	<fval name="name"><value>Set Service context</value></fval>
+	<fval name="serviceName"><value>SUB - ${mqtt.topic}</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare Topic to check if &quot;bad topic&quot; send'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONAddNodeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="content"><value>&quot;renamed_topic_on_subscribe&quot;</value></fval>
+	<fval name="expression"><value>$</value></fval>
+	<fval name="expressionType"><value>0</value></fval>
+	<fval name="insertLocationType"><value>1</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON modify TOPIC</value></fval>
+	<fval name="objectFieldName"><value>Topic</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect OK Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPathFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON Path</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='ServiceContextFilter'>
+					<id field='name' value='Set Service context'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.body</value></fval>
+	<fval name="expression"><value>$.Payload</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.client.identifier</value></fval>
+	<fval name="expression"><value>$.ClientIdentifier</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.topic</value></fval>
+	<fval name="expression"><value>$.Topic</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Reflector">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="httpResponseStatus"><value>200</value></fval>
+	<fval name="logFailure"><value>Failed to echo back the message</value></fval>
+	<fval name="logFatal"><value>Error occurred while echoing the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Successfully echoed back the message</value></fval>
+	<fval name="name"><value>Reflect OK Message</value></fval>
+	<fval name="successNode"><value contentType="reference">-1</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Reflector">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="httpResponseStatus"><value>400</value></fval>
+	<fval name="logFailure"><value>Failed to echo back the message</value></fval>
+	<fval name="logFatal"><value>Error occurred while echoing the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Successfully echoed back the message</value></fval>
+	<fval name="name"><value>Reflect ERROR Message</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='FalseFilter'>
+					<id field='name' value='False Filter'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="FalseFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>False filter error. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value></value></fval>
+	<fval name="name"><value>False Filter</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='JSONAddNodeFilter'>
+					<id field='name' value='JSON modify TOPIC'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ONE</value></fval>
+	<fval name="name"><value>Compare Topic to check for &quot;RENAME&quot;</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Subscribe'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect OK Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Subscribe'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare Topic to check for &quot;RENAME&quot;'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.topic}</value></fval>
+	<fval name="expression"><value>rename_topic_on_subscribe</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CircuitContainer">
+	<fval name="name"><value>IOT</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="XMLFirewall">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+		</key>
+	</key>
+	<fval name="corsProfile"><value contentType="reference">-1</value></fval>
+	<fval name="corsUsage"><value>HTTP</value></fval>
+	<fval name="enableAccessLogging"><value>0</value></fval>
+	<fval name="enabled"><value>1</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="filterCircuit"><value contentType="reference">
+<key type='CircuitContainer'><id field='name' value='IOT'/><key type='FilterCircuit'><id field='name' value='MQTT-Receive'/></key></key>	</value></fval>
+	<fval name="httpMethod"><value>*</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="pathMatching"><value>LONGEST</value></fval>
+	<fval name="payloadMask"><value>0</value></fval>
+	<fval name="uriprefix"><value>/mqtt/receive</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/receive'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value>system.policy.response</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_RSP</value></fval>
+	<fval name="priority"><value>4</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/receive'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_REQ</value></fval>
+	<fval name="priority"><value>1</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/receive'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value>system.policy.request</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_REQ</value></fval>
+	<fval name="priority"><value>0</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/receive'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_RSP</value></fval>
+	<fval name="priority"><value>3</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="HTTP">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+	</key>
+	<fval name="name"><value>Default Services</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="NetService">
+	<fval name="name"><value>Service</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="XMLFirewall">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+		</key>
+	</key>
+	<fval name="corsProfile"><value contentType="reference">-1</value></fval>
+	<fval name="corsUsage"><value>HTTP</value></fval>
+	<fval name="enableAccessLogging"><value>0</value></fval>
+	<fval name="enabled"><value>1</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="filterCircuit"><value contentType="reference">
+<key type='CircuitContainer'><id field='name' value='IOT'/><key type='FilterCircuit'><id field='name' value='MQTT-Subscribe'/></key></key>	</value></fval>
+	<fval name="httpMethod"><value>*</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="pathMatching"><value>LONGEST</value></fval>
+	<fval name="payloadMask"><value>0</value></fval>
+	<fval name="uriprefix"><value>/mqtt/subscribe</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/subscribe'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_REQ</value></fval>
+	<fval name="priority"><value>1</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/subscribe'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_RSP</value></fval>
+	<fval name="priority"><value>3</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/subscribe'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value>system.policy.response</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_RSP</value></fval>
+	<fval name="priority"><value>4</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/subscribe'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value>system.policy.request</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_REQ</value></fval>
+	<fval name="priority"><value>0</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="FilterCircuit">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+	</key>
+	<fval name="category"><value contentType="reference">
+		<key type='PolicyCategoryGroup'>
+			<id field='name' value='Policy Categories'/>
+			<key type='PolicyCategory'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="description"><value></value></fval>
+	<fval name="logMask"><value>3</value></fval>
+	<fval name="name"><value>MQTT-Connect</value></fval>
+	<fval name="start"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='ServiceContextFilter'>
+					<id field='name' value='Set Service context'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPathFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='JSONErrorFilter'>
+					<id field='name' value='JSON Error'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON Path</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='TraceFilter'>
+					<id field='name' value='Trace Filter'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.username</value></fval>
+	<fval name="expression"><value>$.Username</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.clientidentifier</value></fval>
+	<fval name="expression"><value>$.ClientIdentifier</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.password</value></fval>
+	<fval name="expression"><value>$.Password</value></fval>
+	<fval name="failOnError"><value>1</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ChangeMessageFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="body"><value>{}</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Failed in setting the message</value></fval>
+	<fval name="logFatal"><value>Error in setting the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Success in setting the message</value></fval>
+	<fval name="name"><value>Set Empty Message</value></fval>
+	<fval name="outputContentType"><value>appliacation/json</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message with 200'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ServiceContextFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="clientAttributeName"><value>authentication.subject.id</value></fval>
+	<fval name="compositeContext"><value>0</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="metricsMask"><value>1</value></fval>
+	<fval name="name"><value>Set Service context</value></fval>
+	<fval name="serviceName"><value>Connect and Auth</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='JSONPathFilter'>
+					<id field='name' value='JSON Path'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONErrorFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="faultString"><value>{ message: &quot;bad password&quot;}</value></fval>
+	<fval name="httpResponseStatus"><value>403</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON Error</value></fval>
+	<fval name="showAttributes"><value>0</value></fval>
+	<fval name="showDetailedReason"><value>1</value></fval>
+	<fval name="showPath"><value>0</value></fval>
+	<fval name="showStack"><value>0</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Error Message 403'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Reflector">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="httpResponseStatus"><value>403</value></fval>
+	<fval name="logFailure"><value>Failed to echo back the message</value></fval>
+	<fval name="logFatal"><value>Error occurred while echoing the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Successfully echoed back the message</value></fval>
+	<fval name="name"><value>Reflect Error Message 403</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Reflector">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="httpResponseStatus"><value>200</value></fval>
+	<fval name="logFailure"><value>Failed to echo back the message</value></fval>
+	<fval name="logFatal"><value>Error occurred while echoing the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Successfully echoed back the message</value></fval>
+	<fval name="name"><value>Reflect Message with 200</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="TraceFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="doIndent"><value>0</value></fval>
+	<fval name="logFailure"><value>Failed to trace the message properties</value></fval>
+	<fval name="logFatal"><value>Error while tracing the message properties. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Traced the message properties</value></fval>
+	<fval name="name"><value>Trace Filter</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='AttributeAuthnFilter'>
+					<id field='name' value='Attribute Authentication'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="traceAttributes"><value>1</value></fval>
+	<fval name="traceBody"><value>1</value></fval>
+	<fval name="traceLevel"><value>2</value></fval>
+	<fval name="traceMsg"><value></value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeAuthnFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Connect'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='authentication'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="credentialFormat"><value>Username</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='JSONErrorFilter'>
+					<id field='name' value='JSON Error'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Failed to authenticate using username-password attributes.</value></fval>
+	<fval name="logFatal"><value>Error during authentication using username-password attributes. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Authenticated via username-password attributes sucessfully.</value></fval>
+	<fval name="name"><value>Attribute Authentication</value></fval>
+	<fval name="password"><value>${mqtt.password}</value></fval>
+	<fval name="repository"><value contentType="reference">
+<key type='AuthnRepositoryGroup'><id field='name' value='Authentication Repositories'/><key type='AuthnRepositoryLocalGroup'><id field='name' value='Local Repositories'/><key type='AuthnRepositoryLocal'><id field='name' value='Local User Store'/></key></key></key>	</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Connect'/>
+				<key type='ChangeMessageFilter'>
+					<id field='name' value='Set Empty Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="username"><value>${mqtt.username}</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="FilterCircuit">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+	</key>
+	<fval name="category"><value contentType="reference">
+		<key type='PolicyCategoryGroup'>
+			<id field='name' value='Policy Categories'/>
+			<key type='PolicyCategory'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="description"><value></value></fval>
+	<fval name="logMask"><value>3</value></fval>
+	<fval name="name"><value>MQTT-Receive</value></fval>
+	<fval name="start"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='JSONPathFilter'>
+					<id field='name' value='JSON Path'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='JSONAddNodeFilter'>
+					<id field='name' value='JSON alter Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare Attribute alter_message_on_receive</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare Attribute alter_message_on_receive'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.payload}</value></fval>
+	<fval name="expression"><value>alter_message_on_receive</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="FalseFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>False filter error. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value></value></fval>
+	<fval name="name"><value>False Filter</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPathFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON Path</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='ServiceContextFilter'>
+					<id field='name' value='Set Service context'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.clientidentifier</value></fval>
+	<fval name="expression"><value>$.ClientIdentifier</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.body</value></fval>
+	<fval name="expression"><value>$.Payload</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.topic</value></fval>
+	<fval name="expression"><value>$.Topic</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ChangeMessageFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="body"><value>{ message: &quot;bad topic on receive&quot;}</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Failed in setting the message</value></fval>
+	<fval name="logFatal"><value>Error in setting the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Success in setting the message</value></fval>
+	<fval name="name"><value>Set Message bad_topic_on_receive</value></fval>
+	<fval name="outputContentType"><value>application/json</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message 400'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="TraceFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="doIndent"><value>0</value></fval>
+	<fval name="logFailure"><value>Failed to trace the message properties</value></fval>
+	<fval name="logFatal"><value>Error while tracing the message properties. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Traced the message properties</value></fval>
+	<fval name="name"><value>Trace Filter</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare Attribute bad_topic_on_receive'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="traceAttributes"><value>1</value></fval>
+	<fval name="traceBody"><value>1</value></fval>
+	<fval name="traceLevel"><value>2</value></fval>
+	<fval name="traceMsg"><value></value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Reflector">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="httpResponseStatus"><value>200</value></fval>
+	<fval name="logFailure"><value>Failed to echo back the message</value></fval>
+	<fval name="logFatal"><value>Error occurred while echoing the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Successfully echoed back the message</value></fval>
+	<fval name="name"><value>Reflect Message</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ServiceContextFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="clientAttributeName"><value>authentication.subject.id</value></fval>
+	<fval name="compositeContext"><value>0</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="metricsMask"><value>1</value></fval>
+	<fval name="name"><value>Set Service context</value></fval>
+	<fval name="serviceName"><value>REC - $mqtt.topic</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='TraceFilter'>
+					<id field='name' value='Trace Filter'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ChangeMessageFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="body"><value>{ message: &quot;bad payload on receive&quot;}</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Failed in setting the message</value></fval>
+	<fval name="logFatal"><value>Error in setting the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Success in setting the message</value></fval>
+	<fval name="name"><value>Set Message bad_payload_on_receive</value></fval>
+	<fval name="outputContentType"><value>application/json</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message 400'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Reflector">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="httpResponseStatus"><value>400</value></fval>
+	<fval name="logFailure"><value>Failed to echo back the message</value></fval>
+	<fval name="logFatal"><value>Error occurred while echoing the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Successfully echoed back the message</value></fval>
+	<fval name="name"><value>Reflect Message 400</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='FalseFilter'>
+					<id field='name' value='False Filter'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='JSONAddNodeFilter'>
+					<id field='name' value='JSON Rename Topic'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare Attribute rename_topic_on_receive</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare Attribute alter_message_on_receive'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare Attribute rename_topic_on_receive'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.topic}</value></fval>
+	<fval name="expression"><value>rename_topic_on_receive</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='ChangeMessageFilter'>
+					<id field='name' value='Set Message bad_payload_on_receive'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare Attribute bad_payload_on_receive</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare Attribute rename_topic_on_receive'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare Attribute bad_payload_on_receive'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.payload}</value></fval>
+	<fval name="expression"><value>bad_payload_on_receive</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='ChangeMessageFilter'>
+					<id field='name' value='Set Message bad_topic_on_receive'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare Attribute bad_topic_on_receive</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare Attribute bad_payload_on_receive'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare Attribute bad_topic_on_receive'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.topic}</value></fval>
+	<fval name="expression"><value>bad_topic_on_receive</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONAddNodeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="content"><value>&quot;renamed_topic_on_receive&quot;</value></fval>
+	<fval name="expression"><value>$</value></fval>
+	<fval name="expressionType"><value>0</value></fval>
+	<fval name="insertLocationType"><value>1</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON Rename Topic</value></fval>
+	<fval name="objectFieldName"><value>Topic</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONAddNodeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Receive'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="content"><value>&quot;altered_message_on_receive&quot;</value></fval>
+	<fval name="expression"><value>$</value></fval>
+	<fval name="expressionType"><value>0</value></fval>
+	<fval name="insertLocationType"><value>1</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON alter Message</value></fval>
+	<fval name="objectFieldName"><value>Payload</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Receive'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="XMLFirewall">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+		</key>
+	</key>
+	<fval name="corsProfile"><value contentType="reference">-1</value></fval>
+	<fval name="corsUsage"><value>HTTP</value></fval>
+	<fval name="enableAccessLogging"><value>0</value></fval>
+	<fval name="enabled"><value>1</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="filterCircuit"><value contentType="reference">
+<key type='CircuitContainer'><id field='name' value='IOT'/><key type='FilterCircuit'><id field='name' value='MQTT-Connect'/></key></key>	</value></fval>
+	<fval name="httpMethod"><value>*</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="pathMatching"><value>LONGEST</value></fval>
+	<fval name="payloadMask"><value>0</value></fval>
+	<fval name="uriprefix"><value>/mqtt/connect</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/connect'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value>system.policy.response</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_RSP</value></fval>
+	<fval name="priority"><value>4</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/connect'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value>system.policy.request</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_REQ</value></fval>
+	<fval name="priority"><value>0</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/connect'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_RSP</value></fval>
+	<fval name="priority"><value>3</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/connect'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_REQ</value></fval>
+	<fval name="priority"><value>1</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="XMLFirewall">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+		</key>
+	</key>
+	<fval name="corsProfile"><value contentType="reference">-1</value></fval>
+	<fval name="corsUsage"><value>HTTP</value></fval>
+	<fval name="enableAccessLogging"><value>0</value></fval>
+	<fval name="enabled"><value>1</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="filterCircuit"><value contentType="reference">
+<key type='CircuitContainer'><id field='name' value='IOT'/><key type='FilterCircuit'><id field='name' value='MQTT-Publish'/></key></key>	</value></fval>
+	<fval name="httpMethod"><value>*</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="pathMatching"><value>LONGEST</value></fval>
+	<fval name="payloadMask"><value>0</value></fval>
+	<fval name="uriprefix"><value>/mqtt/publish</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/publish'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value>system.policy.request</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_REQ</value></fval>
+	<fval name="priority"><value>0</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/publish'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_REQ</value></fval>
+	<fval name="priority"><value>1</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="PortableCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/publish'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value contentType="reference">-1</value></fval>
+	<fval name="evaluate"><value>true</value></fval>
+	<fval name="name"><value>CUSTOM_POLICY_RSP</value></fval>
+	<fval name="priority"><value>3</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="SoftCircuitReference">
+	<key type='NetService'>
+		<id field='name' value='Service'/>
+		<key type='HTTP'>
+			<id field='name' value='Default Services'/>
+			<key type='XMLFirewall'>
+				<id field='uriprefix' value='/mqtt/publish'/>
+				<id field='httpMethod' value='*'/>
+			</key>
+		</key>
+	</key>
+	<fval name="circuitPK"><value>system.policy.response</value></fval>
+	<fval name="evaluate"><value>1</value></fval>
+	<fval name="name"><value>GLOBAL_POLICY_RSP</value></fval>
+	<fval name="priority"><value>4</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ESConfiguration">
+	<fval name="name"><value>Entity Store Configuration</value></fval>
+	<fval name="passphraseTest"><value>aHR0cDsvL3d3dy52b3JkZWwuY29t</value></fval>
+	<fval name="productKey"><value>VordelGateway</value></fval>
+	<fval name="version"><value>7.5.3</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="FilterCircuit">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+	</key>
+	<fval name="category"><value contentType="reference">
+		<key type='PolicyCategoryGroup'>
+			<id field='name' value='Policy Categories'/>
+			<key type='PolicyCategory'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="description"><value></value></fval>
+	<fval name="logMask"><value>3</value></fval>
+	<fval name="name"><value>MQTT-Publish</value></fval>
+	<fval name="start"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='JSONPathFilter'>
+					<id field='name' value='JSON Path'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="TraceFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="doIndent"><value>0</value></fval>
+	<fval name="logFailure"><value>Failed to trace the message properties</value></fval>
+	<fval name="logFatal"><value>Error while tracing the message properties. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Traced the message properties</value></fval>
+	<fval name="name"><value>Trace Filter</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare bad_topic_on_publish'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="traceAttributes"><value>1</value></fval>
+	<fval name="traceBody"><value>1</value></fval>
+	<fval name="traceLevel"><value>2</value></fval>
+	<fval name="traceMsg"><value></value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='JSONAddNodeFilter'>
+					<id field='name' value='JSON alter Payload'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare alter_message_on_publish</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare rename_topic_on_publish'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare alter_message_on_publish'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.topic}</value></fval>
+	<fval name="expression"><value>alter_message_on_publish</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='ChangeMessageFilter'>
+					<id field='name' value='Set Error Message - Bad Topic'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare bad_topic_on_publish</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare bad_payload_on_publish'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare bad_topic_on_publish'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.topic}</value></fval>
+	<fval name="expression"><value>bad_topic_on_publish</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Reflector">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="httpResponseStatus"><value>200</value></fval>
+	<fval name="logFailure"><value>Failed to echo back the message</value></fval>
+	<fval name="logFatal"><value>Error occurred while echoing the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Successfully echoed back the message</value></fval>
+	<fval name="name"><value>Reflect Message</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPathFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON Path</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='ServiceContextFilter'>
+					<id field='name' value='Set Service context'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.topic</value></fval>
+	<fval name="expression"><value>$.Topic</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.clientidentifier</value></fval>
+	<fval name="expression"><value>$.ClientIdentifier</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONPath">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+			<key type='JSONPathFilter'>
+				<id field='name' value='JSON Path'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attributeName"><value>mqtt.payload</value></fval>
+	<fval name="expression"><value>$.Payload</value></fval>
+	<fval name="failOnError"><value>0</value></fval>
+	<fval name="unmarshalType"><value>java.lang.String</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ChangeMessageFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="body"><value>{ message: &quot;bad topic on publish&quot;}</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Failed in setting the message</value></fval>
+	<fval name="logFatal"><value>Error in setting the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Success in setting the message</value></fval>
+	<fval name="name"><value>Set Error Message - Bad Topic</value></fval>
+	<fval name="outputContentType"><value>application/json</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Error Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='JSONAddNodeFilter'>
+					<id field='name' value='JSON rename Topic'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare rename_topic_on_publish</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare rename_topic_on_publish'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.topic}</value></fval>
+	<fval name="expression"><value>rename_topic_on_publish</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ChangeMessageFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="body"><value>{ message: &quot;bad payload on publish&quot;}</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Failed in setting the message</value></fval>
+	<fval name="logFatal"><value>Error in setting the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Success in setting the message</value></fval>
+	<fval name="name"><value>Set Message - Bad Payload</value></fval>
+	<fval name="outputContentType"><value>application/json</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Error Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="FalseFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>False filter error. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value></value></fval>
+	<fval name="name"><value>False Filter</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="Reflector">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="httpResponseStatus"><value>400</value></fval>
+	<fval name="logFailure"><value>Failed to echo back the message</value></fval>
+	<fval name="logFatal"><value>Error occurred while echoing the message. Error: ${circuit.exception}</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Successfully echoed back the message</value></fval>
+	<fval name="name"><value>Reflect Error Message</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='FalseFilter'>
+					<id field='name' value='False Filter'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="ServiceContextFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="clientAttributeName"><value>authentication.subject.id</value></fval>
+	<fval name="compositeContext"><value>0</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="metricsMask"><value>1</value></fval>
+	<fval name="name"><value>Set Service context</value></fval>
+	<fval name="serviceName"><value>Pub - ${mqtt.topic}</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='TraceFilter'>
+					<id field='name' value='Trace Filter'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="CompareAttributeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="failureNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='ChangeMessageFilter'>
+					<id field='name' value='Set Message - Bad Payload'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="matchingRule"><value>MATCH_ALL</value></fval>
+	<fval name="name"><value>Compare bad_payload_on_publish</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='CompareAttributeFilter'>
+					<id field='name' value='Compare alter_message_on_publish'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="AttributeCompare">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+			<key type='CompareAttributeFilter'>
+				<id field='name' value='Compare bad_payload_on_publish'/>
+			</key>
+		</key>
+	</key>
+	<fval name="attrName"><value>${mqtt.payload}</value></fval>
+	<fval name="expression"><value>bad_payload_on_publish</value></fval>
+	<fval name="matchType"><value>DOES_NOT_CONTAIN</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONAddNodeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="content"><value>&quot;altered-payload-test1234&quot;</value></fval>
+	<fval name="expression"><value>$</value></fval>
+	<fval name="expressionType"><value>0</value></fval>
+	<fval name="insertLocationType"><value>1</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON alter Payload</value></fval>
+	<fval name="objectFieldName"><value>Payload</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+<entity xmlns="http://www.vordel.com/2005/06/24/entityStore"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" type="JSONAddNodeFilter">
+	<key type='CircuitContainer'>
+		<id field='name' value='IOT'/>
+		<key type='FilterCircuit'>
+			<id field='name' value='MQTT-Publish'/>
+		</key>
+	</key>
+	<fval name="abortProcessingOnLogError"><value>0</value></fval>
+	<fval name="category"><value contentType="reference">
+		<key type='CategoryGroup'>
+			<id field='name' value='Filter Categories'/>
+			<key type='Category'>
+				<id field='name' value='miscellaneous'/>
+			</key>
+		</key>
+	</value></fval>
+	<fval name="content"><value>&quot;renamed_topic_on_publish&quot;</value></fval>
+	<fval name="expression"><value>$</value></fval>
+	<fval name="expressionType"><value>0</value></fval>
+	<fval name="insertLocationType"><value>1</value></fval>
+	<fval name="logFailure"><value>Filter failed</value></fval>
+	<fval name="logFatal"><value>Filter aborted due to exception</value></fval>
+	<fval name="logMask"><value>2</value></fval>
+	<fval name="logMaskType"><value>SERVICE</value></fval>
+	<fval name="logSuccess"><value>Filter passed</value></fval>
+	<fval name="name"><value>JSON rename Topic</value></fval>
+	<fval name="objectFieldName"><value>Topic</value></fval>
+	<fval name="successNode"><value contentType="reference">
+		<key type='CircuitContainer'>
+			<id field='name' value='IOT'/>
+			<key type='FilterCircuit'>
+				<id field='name' value='MQTT-Publish'/>
+				<key type='Reflector'>
+					<id field='name' value='Reflect Message'/>
+				</key>
+			</key>
+		</key>
+	</value></fval>
+</entity>
+</entityStoreData>
