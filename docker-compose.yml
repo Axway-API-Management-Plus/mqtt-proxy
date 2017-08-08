@@ -7,7 +7,7 @@ services:
       MQTT_PORT: 1883 # regular mqtt
       MQTT_HOST: 0.0.0.0
 
-      MQTTS_PORT: 1884 # mqtt over tls
+      MQTTS_PORT: 8883 # mqtt over tls
       MQTTS_HOST: 0.0.0.0
       MQTTS_CERT: "./certs/server.pem"
       MQTTS_KEY: "./certs/server.key"
@@ -28,7 +28,7 @@ services:
     tty: true
     ports:
       - 1883:1883   # MQTT
-      - 1884:1884   # MQTTS
+      - 8883:8883   # MQTTS
       - 8080:8080   # MQTT on HTTP
       - 8081:8081   # MQTT on HTTPS
     depends_on:

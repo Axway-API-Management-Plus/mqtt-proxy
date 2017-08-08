@@ -59,7 +59,7 @@ func main() {
 	flag.StringVar(&mqttHost, "mqtt-host", "0.0.0.0", "Mqtt interface to listen to.")
 	flag.BoolVar(&mqttEnable, "mqtt-enable", true, "Enable mqtt protocol")
 
-	flag.IntVar(&mqttsPort, "mqtts-port", 1884, "Mqtts port to listen to.")
+	flag.IntVar(&mqttsPort, "mqtts-port", 8883, "Mqtts port to listen to.")
 	flag.StringVar(&mqttsHost, "mqtts-host", "0.0.0.0", "Mqtts interface to listen to.")
 	flag.StringVar(&mqttsCert, "mqtts-cert", "certs/server.pem", "Certificate used for mqtt TLS.")
 	flag.StringVar(&mqttsKey, "mqtts-key", "certs/server.key", "Key used for mqtt TLS.")

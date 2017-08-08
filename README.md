@@ -1,4 +1,4 @@
-# Description 
+# Description
 Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,...) on MQTT protocol for any MQTT broker
 
 ## API Management Version Compatibilty
@@ -51,7 +51,7 @@ Usage of ./mqtt-proxy:
   -mqtts-key string
     	Key used for mqtt TLS. (default "certs/server.key")
   -mqtts-port int
-    	Mqtts port to listen to. (default 1884)
+    	Mqtts port to listen to. (default 8883)
 ```
 
 Test full environment with docker
@@ -60,9 +60,13 @@ docker-compose -f docker-compose.yml up
 ```
 
 ## Configure
-
 When AUTH_URL is set, every mqtt packet (CONNECT, SUBSCRIBE, PUBLISH in/out) are check against a [AUTH_API](./AUTH_API.md)
 
+## Quickstart
+```sh
+  docker run -it --rm mqtt-proxy davinci1976/mqtt-proxy mqtt-proxy [parameters... see above]
+  docker run -it --rm mqtt-proxy davinci1976/mqtt-proxy mqtt-proxy --http-enable=false --mqtt-enable=false
+```
 
 ## Build standalone binary:
 Prerequisites : `golang`
@@ -77,7 +81,7 @@ Prerequisites : `docker 17.05`
 ```
 docker build -t mqtt-proxy .
 ```
-
+-or-
 ```
 make docker
 ```

@@ -22,7 +22,7 @@ class Once {
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
-const MQTT_BROKER = "mqtts://mqtt-proxy:1884"
+const MQTT_BROKER = "mqtts://mqtt-proxy:8883"
 
 describe('mqtt-proxy (TLS)', () => {
 
