@@ -4,7 +4,6 @@ services:
   sut:
     build: ./tests/test
     command: npm test
-    tty: true
     environment:
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
     depends_on:
@@ -41,7 +40,6 @@ services:
       #AUTH_URL: http://policy:3000/mqtt
       AUTH_URL: https://policy:3001/mqtt
       AUTH_CA_FILE: "./certs/policy.pem"
-    tty: true
     ports:
       - 1883:1883   # MQTT
       - 1884:1884   # MQTTS
