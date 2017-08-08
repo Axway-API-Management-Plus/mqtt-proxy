@@ -4,7 +4,7 @@ DATE := $(shell date +'%Y-%M-%d_%H:%M:%S')
 BUILD := $(shell git rev-parse HEAD | cut -c1-8)
 LDFLAGS :=-ldflags "-s -w -X=main.Version=$(VERSION) -X=main.Build=$(BUILD) -X=main.Date=$(DATE)"
 IMAGE := $(NAME)
-REGISTRY := axway
+REGISTRY := davinci1976
 PUBLISH := $(REGISTRY)/$(IMAGE)
 
 .PHONY: docker all certs deps
