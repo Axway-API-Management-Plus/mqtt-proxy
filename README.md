@@ -7,6 +7,8 @@ Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,..
 [Image1]: https://github.com/Axway-API-Management-Plus/mqtt-proxy/blob/master/readme/mqtt-proxy01.png "Image1"
 
 
+The diagram below details more flows between the various components:
+
 ![alt text][Image2]
 
 [Image2]: https://github.com/Axway-API-Management-Plus/mqtt-proxy/blob/master/readme/mqtt-proxy02.png "Image2"
