@@ -41,6 +41,7 @@ var mqttBrokerUsername string
 var mqttBrokerPassword string
 var authURL string
 var authCAFile string
+
 var Version string
 var Build string
 var Date string
@@ -84,7 +85,7 @@ func main() {
 	flag.StringVar(&authCAFile, "auth-ca-file", "", "PEM encoded CA's certificate file for the authz/authn service")
 	flag.Parse()
 
-	log.Println("Starting mqtt-proxy @ ", Version, Build, Date)
+	log.Println("Starting mqtt-proxy - version:", Version, "build:", Build, " date:", Date)
 	log.Println("mqtt server ", mqttBrokerHost, mqttBrokerPort, mqttBrokerUsername, mqttBrokerPassword)
 
 	if authURL != "" {
@@ -127,6 +128,7 @@ func main() {
 
 	if httpEnable || httpsEnable {
 		wsMqttPrepare()
+		apiPublishMqttPrepare()
 	}
 
 	if httpEnable {

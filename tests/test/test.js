@@ -1,4 +1,5 @@
-var mqtt = require('mqtt')
+const mqtt = require('mqtt')
+const request = require('request')
 
 function expect(a, b) {
     if (a != b) {
@@ -21,6 +22,7 @@ class Once {
 
 const MQTT_BROKER = 'mqtt://mqtt-proxy:1883'
 const MQTT_BROKER_BAD = 'mqtts://mqtt-proxy:1883'
+const HTTP_BROKER = 'http://mqtt-proxy:8080'
 
 
 describe('mqtt-proxy (unsecure)', () => {
@@ -213,13 +215,48 @@ describe('mqtt-proxy (unsecure)', () => {
         })
         client.on('message', function (topic, message) {
             if (message != "altered_message_on_receive") {
-                return done(new Error('Unexpected message :' + topic))
+                return once.done(new Error('Unexpected message :' + topic))
             }
             once.done()
             client.close()
         })
         client.on('close', function (err) {
             once.done(new Error("premature close"))
+        })
+    })
+
+    it('test api', (done) => {
+        const client = mqtt.connect(MQTT_BROKER, { username: "test-http-api", password: "goodpass" })
+        const once = new Once(done)
+        client.on('connect', function () {
+            client.subscribe('test-http-api')
+            console.log("API calling...")
+            request.post(HTTP_BROKER + "/topic/test-http-api", {
+                'auth': {
+                  'user': 'test-http-api-http',
+                  'pass': 'goodpass'
+                },
+                'body': "test_http_api_message"
+              }, (err, response, body) => {
+              console.log("API called", err, response.headers, response.statusCode, body)
+              if (err) {
+                return once.done(err)
+              }
+              if (response.statusCode != 200) {
+                return once.done(new Error("bad response status code :" + response.statusCode))
+              }
+              once.done()
+            })
+        })
+        client.on('message', function (topic, message) {
+            if (message != "test_http_api_message") {
+                return once.done(new Error('Unexpected message :' + topic))
+            }
+            //once.done()
+            //client.close()
+        })
+        client.on('close', function (err) {
+            //once.done(new Error("premature close"))
         })
     })
 })

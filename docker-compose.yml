@@ -2,13 +2,12 @@ version: "2"
 
 services:
   mqtt-proxy:
-    build: .
+    #build: .
+    image: davinci1976/mqtt-proxy
     environment:
       MQTT_PORT: 1883 # regular mqtt
-      MQTT_HOST: 0.0.0.0
 
       MQTTS_PORT: 8883 # mqtt over tls
-      MQTTS_HOST: 0.0.0.0
       MQTTS_CERT: "./certs/server.pem"
       MQTTS_KEY: "./certs/server.key"
 

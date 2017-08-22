@@ -3,8 +3,8 @@ package main
 import (
 	"net"
 
-	log "github.com/sirupsen/logrus"
 	"github.com/eclipse/paho.mqtt.golang/packets"
+	log "github.com/sirupsen/logrus"
 )
 
 func (session *Session) ForwardMQTTPacket(way string, r net.Conn, w net.Conn) error {
@@ -20,11 +20,11 @@ func (session *Session) ForwardMQTTPacket(way string, r net.Conn, w net.Conn) er
 	if authURL != "" {
 		switch p := cp.(type) {
 		case *packets.ConnectPacket: /*Outbound only*/
-			err = session.HandleConnect(way, p, r, w)
+			err = session.HandleConnect(way, p)
 		case *packets.SubscribePacket: /*Outbound only*/
-			err = session.HandleSubscribe(way, p, r, w)
+			err = session.HandleSubscribe(way, p, r)
 		case *packets.PublishPacket: /*Inbound/Outbound only*/
-			err = session.HandlePublish(way, p, r, w)
+			err = session.HandlePublish(way, p)
 		default:
 			err = nil
 		}
