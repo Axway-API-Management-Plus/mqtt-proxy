@@ -30,7 +30,8 @@ var globalSessionCount int32
 func NewSession() *Session {
 	var session Session
 	//g := atomic.AddInt64(&globalSessionID, 1)
-	session.id = uuid.NewV4().String()
+	id, _ := uuid.NewV4()
+	session.id = id.String()
 	atomic.AddInt32(&globalSessionCount, 1)
 	return &session
 }
