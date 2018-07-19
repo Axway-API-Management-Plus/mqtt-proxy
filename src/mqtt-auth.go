@@ -81,7 +81,7 @@ func (session *Session) request(way string, uri string, request interface{}, res
 		return 0, err
 	}
 
-	log.Println("Session", session.id, way, "- Auth response", authURL+uri, resp.StatusCode, string(body))
+	log.Debugln("Session", session.id, way, "- Auth response", authURL+uri, resp.StatusCode, string(body))
 	if response != nil {
 		err = json.Unmarshal(body, response)
 		if err != nil {
@@ -112,15 +112,15 @@ func (session *Session) HandleConnect(way string, p *packets.ConnectPacket, r ne
 
 	//Override information
 	if resp.ClientIdentifier != "" && resp.ClientIdentifier != p.ClientIdentifier {
-		log.Println("Session", session.id, way, "- CONNECT alter ClientIdentifier", p.ClientIdentifier, "-->", resp.ClientIdentifier)
+		log.Debugln("Session", session.id, way, "- CONNECT alter ClientIdentifier", p.ClientIdentifier, "-->", resp.ClientIdentifier)
 		p.ClientIdentifier = resp.ClientIdentifier
 	}
 	if resp.Username != "" && resp.Username != p.Username {
-		log.Println("Session", session.id, way, "- CONNECT alter Username", p.Username, "-->", resp.Username)
+		log.Debugln("Session", session.id, way, "- CONNECT alter Username", p.Username, "-->", resp.Username)
 		p.Username = resp.Username
 	}
 	if resp.Password != "" && resp.Password != string(p.Password) {
-		log.Println("Session", session.id, way, "- CONNECT alter Password")
+		log.Debugln("Session", session.id, way, "- CONNECT alter Password")
 		p.Password = []byte(resp.Password)
 	}
 	session.Username = p.Username
@@ -130,7 +130,7 @@ func (session *Session) HandleConnect(way string, p *packets.ConnectPacket, r ne
 }
 
 func (session *Session) HandleSubscribe(way string, p *packets.SubscribePacket, r net.Conn, w net.Conn) error {
-	log.Println("Session", session.id, way, "- SUBSCRIBE", p.Topics, p.Qos)
+	log.Debugln("Session", session.id, way, "- SUBSCRIBE", p.Topics, p.Qos)
 	var resp MQTTSubscribeResponse
 	topics := p.Topics
 	for i := range p.Topics {
@@ -153,7 +153,7 @@ func (session *Session) HandleSubscribe(way string, p *packets.SubscribePacket, 
 		}
 
 		if resp.Topic != "" && resp.Topic != topics[i] {
-			log.Println("Session", session.id, way, "- SUBSCRIBE alter topic", i, topics[i], "-->", resp.Topic)
+			log.Debugln("Session", session.id, way, "- SUBSCRIBE alter topic", i, topics[i], "-->", resp.Topic)
 			topics[i] = resp.Topic
 		}
 	}
@@ -170,8 +170,8 @@ func (session *Session) HandlePublish(way string, p *packets.PublishPacket, r ne
 		action = "RECEIVE"
 		uri = "/receive"
 	}
-	log.Println("Session", session.id, way, "- "+action, r.RemoteAddr().String(), w.RemoteAddr().String())
-	log.Println("Session", session.id, way, "- "+action, p.TopicName, p.Qos, string(p.Payload))
+	log.Debugln("Session", session.id, way, "- "+action, r.RemoteAddr().String(), w.RemoteAddr().String())
+	log.Debugln("Session", session.id, way, "- "+action, p.TopicName, p.Qos, string(p.Payload))
 	rq := MQTTPublish{session.id, session.Username, session.ClientIdentifier, p.TopicName, int(p.Qos), string(p.Payload)}
 	var resp MQTTPublishResponse
 	code, err := session.request(way, uri, rq, &resp)
@@ -184,11 +184,11 @@ func (session *Session) HandlePublish(way string, p *packets.PublishPacket, r ne
 		return errors.New(action + " Not Authorized")
 	}
 	if resp.Topic != "" && resp.Topic != p.TopicName {
-		log.Println("Session", session.id, way, "- "+action+" alter topic", p.TopicName, "-->", resp.Topic)
+		log.Debugln("Session", session.id, way, "- "+action+" alter topic", p.TopicName, "-->", resp.Topic)
 		p.TopicName = resp.Topic
 	}
 	if resp.Payload != "" && resp.Payload != string(p.Payload) {
-		log.Println("Session", session.id, way, "- "+action+"alter topic", p.Payload, "-->", resp.Payload)
+		log.Debugln("Session", session.id, way, "- "+action+"alter topic", p.Payload, "-->", resp.Payload)
 		p.Payload = []byte(resp.Payload)
 	}
 	return nil

@@ -42,7 +42,7 @@ func (session *Session) forwardHalf(way string, c1 net.Conn, c2 net.Conn) {
 	//io.Copy(c1, c2)
 
 	for {
-		log.Println("Session", session.id, way, "- Wait Packet", c1.RemoteAddr().String(), c2.RemoteAddr().String())
+		log.Debugln("Session", session.id, way, "- Wait Packet", c1.RemoteAddr().String(), c2.RemoteAddr().String())
 		err := session.ForwardMQTTPacket(way, c1, c2)
 		if err != nil {
 			session.closed = true
@@ -84,7 +84,7 @@ func mqttAccept(l net.Listener) {
 		// Listen for an incoming connection.
 		conn, err := l.Accept()
 		if err != nil {
-			log.Println("Error accepting: ", err.Error())
+			log.Errorln("Error accepting: ", err.Error())
 			os.Exit(1)
 		}
 		// Handle connections in a new goroutine.
@@ -98,7 +98,7 @@ func mqttListen() {
 	addr := mqttHost + ":" + strconv.Itoa(mqttPort)
 	l, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Println("mqtt: Error listening mqtt://"+addr, err.Error())
+		log.Errorln("mqtt: Error listening mqtt://"+addr, err.Error())
 		os.Exit(1)
 	}
 	// Close the listener when the application closes.
@@ -119,7 +119,7 @@ func mqttsListen() {
 	addr := mqttsHost + ":" + strconv.Itoa(mqttsPort)
 	l, err := tls.Listen("tcp", addr, &config)
 	if err != nil {
-		log.Println("mqtts: Error listening mqtts://"+addr, err.Error())
+		log.Errorln("mqtts: Error listening mqtts://"+addr, err.Error())
 		os.Exit(1)
 	}
 	// Close the listener when the application closes.
