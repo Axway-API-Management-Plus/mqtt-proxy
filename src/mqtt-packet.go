@@ -11,11 +11,11 @@ func (session *Session) ForwardMQTTPacket(way string, r net.Conn, w net.Conn) er
 	cp, err := packets.ReadPacket(r)
 	if err != nil {
 		if !session.closed {
-			log.Errorln("Session", session.id, way, "- Error reading MQTT packet", err)
+			log.Warnln("Session", session.id, way, "- Error reading MQTT packet", err)
 		}
 		return err
 	}
-	log.Println("Session", session.id, way, "- Forward MQTT packet", cp.String())
+	log.Debugln("Session", session.id, way, "- Forward MQTT packet", cp.String())
 
 	if authURL != "" {
 		switch p := cp.(type) {
@@ -33,7 +33,7 @@ func (session *Session) ForwardMQTTPacket(way string, r net.Conn, w net.Conn) er
 	}
 
 	if err != nil {
-		log.Println("Session", session.id, way, "- Forward MQTT packet", err)
+		log.Debugln("Session", session.id, way, "- Forward MQTT packet", err)
 		return err
 	}
 
