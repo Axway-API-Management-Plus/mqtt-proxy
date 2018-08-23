@@ -1,4 +1,7 @@
 # Description
+
+[![Build Status](https://travis-ci.org/jdavanne/docker-sni-proxy.svg?branch=master)](https://travis-ci.org/jdavanne/docker-sni-proxy)
+
 Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,...) on MQTT protocol for any MQTT broker
 
 
