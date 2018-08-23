@@ -59,7 +59,7 @@ make docker-test
 
 ## Changelog
 - 0.0.5
-  - Add HTTP(s) API for MQTT Publish `/api/topics/:topic` with basic authentication
+  - Add HTTP(s) API for MQTT Publish `/topics/:topic` with basic authentication
 - 0.0.4
   - Add HTTPS and MQTTS server support `--mqtts-*` `--https-*`
   - Add HTTPS client support for authz/authn with added cert verification  

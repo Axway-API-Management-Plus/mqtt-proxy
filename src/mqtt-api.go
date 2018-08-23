@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,6 +11,16 @@ import (
 	"github.com/eclipse/paho.mqtt.golang/packets"
 	log "github.com/sirupsen/logrus"
 )
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-"
+
+func RandStringBytesRmndr(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Int63()%int64(len(letterBytes))]
+	}
+	return string(b)
+}
 
 func apiPublishMqttPrepare() {
 	http.HandleFunc("/topic/", func(w http.ResponseWriter, r *http.Request) {
@@ -22,7 +33,8 @@ func apiPublishMqttPrepare() {
 		var pConnect packets.ConnectPacket
 		pConnect.Username = user
 		pConnect.Password = []byte(pass)
-		pConnect.ClientIdentifier = "api-"
+		//FIXME: a collision probability exits
+		pConnect.ClientIdentifier = "api-" + RandStringBytesRmndr(10)
 		pConnect.CleanSession = true
 		pConnect.ProtocolName = "MQTT"
 		pConnect.ProtocolVersion = 5
