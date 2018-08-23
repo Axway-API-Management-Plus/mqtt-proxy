@@ -6,10 +6,12 @@ go:
 services:
   - docker
 
-script:
+script:	
+  - set -e
   - make docker
   - make docker-test
   - if [ "$TRAVIS_BRANCH" == "master" ]; then 
       make docker-login ;
       make docker-publish ; 
     fi
+
