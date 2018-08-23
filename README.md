@@ -1,8 +1,25 @@
-# MQTT Proxy
+# Description
+
+[![Build Status](https://travis-ci.org/jdavanne/docker-sni-proxy.svg?branch=master)](https://travis-ci.org/jdavanne/docker-sni-proxy)
+
 ![alt text](https://img.shields.io/docker/automated/davinci1976/mqtt-proxy.svg)
 ![alt text](https://img.shields.io/docker/build/davinci1976/mqtt-proxy.svg)
 
 Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,...) on MQTT protocol for any MQTT broker
+
+
+![alt text][Image1]
+
+[Image1]: https://github.com/Axway-API-Management-Plus/mqtt-proxy/blob/master/readme/mqtt-proxy01.png "Image1"
+
+
+The diagram below details more flows between the various components:
+
+![alt text][Image2]
+
+[Image2]: https://github.com/Axway-API-Management-Plus/mqtt-proxy/blob/master/readme/mqtt-proxy02.png "Image2"
+
+
 
 ## API Management Version Compatibilty
 This artefact can be used with every API Management Plus version

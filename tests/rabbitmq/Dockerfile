@@ -22,7 +22,7 @@ WORKDIR /data
 
 # Install RabbitMQ.
 RUN apt-get update
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y wget gnupg
 
 RUN wget -qO - http://www.rabbitmq.com/rabbitmq-signing-key-public.asc | apt-key add -
 RUN echo "deb http://www.rabbitmq.com/debian/ testing main" > /etc/apt/sources.list.d/rabbitmq.list

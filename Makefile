@@ -56,6 +56,9 @@ docker:
 
 docker-publish-all: docker-publish docker-publish-version
 
+docker-login:
+	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
 docker-publish-version:
 	docker tag $(IMAGE) $(PUBLISH):$(VERSION)
 	docker push $(PUBLISH):$(VERSION)
