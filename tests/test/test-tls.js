@@ -121,7 +121,7 @@ describe('mqtt-proxy (TLS)', () => {
         })
         client.on('message', function (topic, message) {
             if (topic != "renamed_topic_on_subscribe") {
-                return done(new Error('Unexpected topic :' + topic))
+                return once.done(new Error('Unexpected topic :' + topic))
             }
             once.done()
             client.close()
@@ -178,7 +178,7 @@ describe('mqtt-proxy (TLS)', () => {
         })
         client.on('message', function (topic, message) {
             if (message != "altered_message_on_publish") {
-                return done(new Error('Unexpected message :' + topic))
+                return once.done(new Error('Unexpected message :' + topic))
             }
             once.done()
             client.close()
@@ -196,7 +196,7 @@ describe('mqtt-proxy (TLS)', () => {
         })
         client.on('message', function (topic, message) {
             if (message != "altered_message_on_receive") {
-                return done(new Error('Unexpected message :' + topic))
+                return once.done(new Error('Unexpected message :' + topic))
             }
             once.done()
             client.close()
