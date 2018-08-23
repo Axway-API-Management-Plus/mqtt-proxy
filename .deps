@@ -1,3 +1,4 @@
+github.com/eclipse/paho.mqtt.golang
 github.com/eclipse/paho.mqtt.golang/packets
 github.com/gorilla/websocket
 github.com/namsral/flag

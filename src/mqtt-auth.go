@@ -92,7 +92,7 @@ func (session *Session) request(way string, uri string, request interface{}, res
 	return resp.StatusCode, nil
 }
 
-func (session *Session) HandleConnect(way string, p *packets.ConnectPacket, r net.Conn, w net.Conn) error {
+func (session *Session) HandleConnect(way string, p *packets.ConnectPacket) error {
 	log.Println("Session", session.id, "- CONNECT")
 	var resp MQTTConnectResponse
 	rq := MQTTConnect{session.id, p.Username, string(p.Password), p.ClientIdentifier, p.CleanSession, p.ProtocolName, int(p.ProtocolVersion)}
@@ -129,7 +129,7 @@ func (session *Session) HandleConnect(way string, p *packets.ConnectPacket, r ne
 	return nil
 }
 
-func (session *Session) HandleSubscribe(way string, p *packets.SubscribePacket, r net.Conn, w net.Conn) error {
+func (session *Session) HandleSubscribe(way string, p *packets.SubscribePacket, r net.Conn) error {
 	log.Println("Session", session.id, way, "- SUBSCRIBE", p.Topics, p.Qos)
 	var resp MQTTSubscribeResponse
 	topics := p.Topics
@@ -163,14 +163,14 @@ func (session *Session) HandleSubscribe(way string, p *packets.SubscribePacket, 
 	return nil
 }
 
-func (session *Session) HandlePublish(way string, p *packets.PublishPacket, r net.Conn, w net.Conn) error {
+func (session *Session) HandlePublish(way string, p *packets.PublishPacket) error {
 	action := "PUBLISH"
 	uri := "/publish"
-	if w == session.inbound {
+	if way == "<" {
 		action = "RECEIVE"
 		uri = "/receive"
 	}
-	log.Println("Session", session.id, way, "- "+action, r.RemoteAddr().String(), w.RemoteAddr().String())
+	//log.Println("Session", session.id, way, "- "+action, r.RemoteAddr().String(), w.RemoteAddr().String())
 	log.Println("Session", session.id, way, "- "+action, p.TopicName, p.Qos, string(p.Payload))
 	rq := MQTTPublish{session.id, session.Username, session.ClientIdentifier, p.TopicName, int(p.Qos), string(p.Payload)}
 	var resp MQTTPublishResponse

@@ -1,4 +1,6 @@
 const mqtt = require('mqtt')
+const request = require('request')
+const fs = require('fs')
 
 function expect(a, b) {
     if (a != b) {
@@ -22,7 +24,10 @@ class Once {
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
-const MQTT_BROKER = "mqtts://mqtt-proxy:8883"
+const MQTT_BROKER = 'mqtts://mqtt-proxy:8883'
+const HTTP_BROKER = 'https://mqtt-proxy:8081'
+
+const casigningcert = fs.readFileSync('certs/mqtt-proxy.pem')
 
 describe('mqtt-proxy (TLS)', () => {
 
@@ -116,7 +121,7 @@ describe('mqtt-proxy (TLS)', () => {
         })
         client.on('message', function (topic, message) {
             if (topic != "renamed_topic_on_subscribe") {
-                return done(new Error('Unexpected topic :' + topic))
+                return once.done(new Error('Unexpected topic :' + topic))
             }
             once.done()
             client.close()
@@ -173,7 +178,7 @@ describe('mqtt-proxy (TLS)', () => {
         })
         client.on('message', function (topic, message) {
             if (message != "altered_message_on_publish") {
-                return done(new Error('Unexpected message :' + topic))
+                return once.done(new Error('Unexpected message :' + topic))
             }
             once.done()
             client.close()
@@ -191,13 +196,50 @@ describe('mqtt-proxy (TLS)', () => {
         })
         client.on('message', function (topic, message) {
             if (message != "altered_message_on_receive") {
-                return done(new Error('Unexpected message :' + topic))
+                return once.done(new Error('Unexpected message :' + topic))
             }
             once.done()
             client.close()
         })
         client.on('close', function (err) {
             once.done(new Error("premature close"))
+        })
+    })
+    it.skip('test api', (done) => {
+        const client = mqtt.connect(MQTT_BROKER, { username: "test-http-api", password: "goodpass" })
+        const once = new Once(done)
+        client.on('connect', function () {
+            client.subscribe('test-http-api')
+            console.log("API calling...")
+            request.post(HTTP_BROKER + "/topic/test-http-api", {
+                auth: {
+                  user: 'test-http-api-http',
+                  pass: 'goodpass'
+                },
+                body: "test_http_api_message",
+                agent: {
+                  ca: casigningcert,
+                },
+              }, (err, response, body) => {
+              console.log("API called", err, response.headers, response.statusCode, body)
+              if (err) {
+                return once.done(err)
+              }
+              if (response.statusCode != 200) {
+                return once.done(new Error("bad response status code :" + response.statusCode))
+              }
+              once.done()
+            })
+        })
+        client.on('message', function (topic, message) {
+            if (message != "test_http_api_message") {
+                return once.done(new Error('Unexpected message :' + topic))
+            }
+            //once.done()
+            client.close()
+        })
+        client.on('close', function (err) {
+            //once.done(new Error("premature close"))
         })
     })
 })

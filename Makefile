@@ -1,4 +1,4 @@
-VERSION := 0.0.4
+VERSION := 0.0.5
 NAME := mqtt-proxy
 DATE := $(shell date +'%Y-%M-%d_%H:%M:%S')
 BUILD := $(shell git rev-parse HEAD | cut -c1-8)
@@ -20,7 +20,8 @@ dev:
 docker-test:
 	docker-compose -f docker-compose.test.yml down
 	docker-compose -f docker-compose.test.yml build
-	docker-compose -f docker-compose.test.yml run sut  || (docker-compose -f docker-compose.test.yml logs -t | sort -k 3 ; docker-compose -f docker-compose.test.yml down ; exit 1)
+	docker-compose -f docker-compose.test.yml up --abort-on-container-exit || (docker-compose -f docker-compose.test.yml down ; exit 1)
+	#docker-compose -f docker-compose.test.yml run sut  || (docker-compose -f docker-compose.test.yml logs -t | sort -k 3 ; docker-compose -f docker-compose.test.yml down ; exit 1)
 	docker-compose -f docker-compose.test.yml down
 
 docker-test-logs:

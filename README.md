@@ -2,6 +2,9 @@
 
 [![Build Status](https://travis-ci.org/Axway-API-Management-Plus/mqtt-proxy.svg?branch=master)](https://travis-ci.org/Axway-API-Management-Plus/mqtt-proxy)
 
+![alt text](https://img.shields.io/docker/automated/davinci1976/mqtt-proxy.svg)
+![alt text](https://img.shields.io/docker/build/davinci1976/mqtt-proxy.svg)
+
 Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,...) on MQTT protocol for any MQTT broker.
 
 
@@ -72,11 +75,12 @@ make docker-test
 ```
 
 ## Changelog
+- 0.0.5
+  - Add HTTP(s) API for MQTT Publish `/topics/:topic` with basic authentication
 - 0.0.4
   - Add HTTPS and MQTTS server support `--mqtts-*` `--https-*`
   - Add HTTPS client support for authz/authn with added cert verification  
   - Remove the 2 steps build: use docker 17.05 build capability
-
 - 0.0.3
   - Add websocket support `--http-host` `--http-port`
   - rename `--mqtt-*` variables to `--mqtt-broker-*`
@@ -87,8 +91,6 @@ make docker-test
   - no configurable routes
 - No TLS support for broker
 - No additional TLS options supported between the client and mqtt-proxy (algo, ....)
-- No HTTP API to publish a MQTT message on a topic `/topics/:topic?qos=:qos`
-   (like http://docs.aws.amazon.com/iot/latest/developerguide/protocols.html#http)
 - No cache for publish/receive/subscribe policy check
 
 ## Contributing
