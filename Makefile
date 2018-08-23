@@ -37,7 +37,7 @@ test-specific:
 	go test -v $$(ls *.go | grep -v "_test.go") $(ARGS)
 
 deps:
-	go list -f '{{range .TestImports}}{{.}} {{end}} {{range .Imports}}{{.}} {{end}}' ./... | sed 's/ /\n/g' | grep -e "^[^/_\.][^/]*\.[^/]*/" |sort -u >.deps
+	go list -f '{{range .TestImports}}{{.}} {{end}} {{range .Imports}}{{.}} {{end}}' ./... | tr ' ' '\n' | grep -e "^[^/_\.][^/]*\.[^/]*/" |sort -u >.deps
 
 deps-install:
 	go get -v $$(cat .deps)
@@ -54,6 +54,9 @@ docker:
 	docker build -t $(IMAGE) .
 
 docker-publish-all: docker-publish docker-publish-version
+
+docker-login:
+	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
 docker-publish-version:
 	docker tag $(IMAGE) $(PUBLISH):$(VERSION)
