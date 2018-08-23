@@ -5,7 +5,7 @@
 ![alt text](https://img.shields.io/docker/automated/davinci1976/mqtt-proxy.svg)
 ![alt text](https://img.shields.io/docker/build/davinci1976/mqtt-proxy.svg)
 
-Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,...) on MQTT protocol for any MQTT broker
+Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,...) on MQTT protocol for any MQTT broker.
 
 
 ![alt text][Image1]
