@@ -34,7 +34,7 @@ In API Gateway Policy Studio, please use Import Configuration Fragment to upload
 
 ## Command-line / Environment options
 ```sh
-docker run -it --rm mqtt-proxy davinci1976/mqtt-proxy mqtt-proxy --help
+docker run -it --rm davinci1976/mqtt-proxy mqtt-proxy --help
 ```
 
 ## Quickstart
