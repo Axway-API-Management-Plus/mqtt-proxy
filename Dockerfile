@@ -3,7 +3,6 @@ FROM golang:alpine
 RUN apk add --no-cache make git ca-certificates
 WORKDIR /app/src/mqtt-proxy
 COPY Makefile .deps ./
-RUN dos2unix .deps 
 RUN make deps-install
 
 COPY . .git ./
