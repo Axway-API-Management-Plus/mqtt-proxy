@@ -32,11 +32,11 @@ This artefact can be used with every API Management Plus version
 ## Configure your policy engine
 The first important step is to tell the MQTT-Proxy, the location of the REST-API to use. This is configured using the Docker Environment-Variable AUTH_URL and when configured every mqtt packet (CONNECT, SUBSCRIBE, PUBLISH in/out) is checked against this endpoint. The REST-API calls exeuted by the MQTT-Proxy are described here: [AUTH_API](./AUTH_API.md)
 
-We are providing some samples REST-APIs for the Axway API Gateway in: `./api-gateway-policies/mqtt-proxy-apigw-policy.xml`
+We are providing some sample REST-APIs for the Axway API Gateway in: `./api-gateway-policies/mqtt-proxy-apigw-policy.xml`
 To use it, just "Import the Configuration Fragment" using Axway API Gateway Policy Studio and deploy this to your API-Gateway.
 
 ## Command-line / Environment options
-The MQQT-Proxy binary comes with a number of command-line options to enable, disable or control certain features. To review all possible command-line options the MQTT-Proxy provides, please execute the following command:
+The MQTT-Proxy binary comes with a number of command-line options to enable, disable or control certain features. To review all possible command-line options the MQTT-Proxy provides, please execute the following command:
 ```sh
 docker run -it --rm davinci1976/mqtt-proxy mqtt-proxy --help
 ```
@@ -45,7 +45,7 @@ docker run -it --rm davinci1976/mqtt-proxy mqtt-proxy --help
 To use the MQTT-Proxy you have multiple ways to start it, either using your own MQTT-Broker or an MQTT-Broker included in this asset and started as a Docker-Container.  
 
 ### Standalone (mqtt-proxy only)
-This means, that no MQTT-Broker is started, hence you have to configure the location of your existing running MQTT-Broker. 
+Standalone means, that no MQTT-Broker is started, hence you have to configure the location of your existing running MQTT-Broker. 
 This is a simple example without user-authentication against the MQTT-Broker:
 ```sh
 docker run -it --rm -e AUTH_URL=http://api-host:8080/mqtt -e MQTT_BROKER_HOST=my-mqtt-broker -p 1883:1883 davinci1976/mqtt-proxy
@@ -54,9 +54,9 @@ An example would be:
 ```sh
 docker run -it --rm -e AUTH_URL=http://172.17.0.1:8080/mqtt -e PORT=1884 -e MQTT_BROKER_HOST=172.10.1 -p 1884:1883 davinci1976/mqtt-proxy
 ```
-or using some of command line options provided by the mqtt-proxy binary:
+another one using some of command line options provided by the mqtt-proxy binary plus user-authn against the MQTT-Broker:
 ```sh
-docker run -it --rm -e AUTH_URL=http://172.17.0.1:8080/mqtt -e MQTT_BROKER_HOST=172.10.1 -p 1884:1883 davinci1976/mqtt-proxy mqtt-proxy -mqtt-port 1884 -mqtts-port 1885
+docker run -it --rm -e AUTH_URL=http://172.17.0.1:8080/mqtt -e MQTT_BROKER_HOST=172.10.1 -e MQTT_BROKER_USERNAME=mqttuser -e MQTT_BROKER_PASSWORD=changeme -p 1884:1883 davinci1976/mqtt-proxy mqtt-proxy -mqtt-port 1884 -mqtts-port 1885
 ```
 The following environment variables including default values are supported (please the the --help for all command line options):
 ```
