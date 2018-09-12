@@ -1,9 +1,9 @@
 # Description
 
-[![Build Status](https://travis-ci.org/jdavanne/docker-sni-proxy.svg?branch=master)](https://travis-ci.org/jdavanne/docker-sni-proxy)
+[![Build Status](https://travis-ci.org/Axway-API-Management-Plus/mqtt-proxy.svg?branch=master)](https://travis-ci.org/Axway-API-Management-Plus/mqtt-proxy)
 
-Proxy to apply Axway API Gateway policies (authN, authZ, content manipulation,...) on MQTT protocol for any MQTT broker.
 The MQTT-Proxy itself sits between the MQTT-Provider & -Consumer and intercepts incoming MQTT-Commands, with the ability to call a REST-API at the API-Gateway. With that, it is for instance possible to validate, that a certain MQTT-Consumer can subscribe to a topic, as the API-Gateway can easily validate the Subscription-Request using a database, another downstream API, whatever.
+
 
 To get an overview you can also watch our MQTT video series:  
 [![MQTT Proxy and Trigger videos](https://img.youtube.com/vi/8RoElGdBVxY/1.jpg)](https://www.youtube.com/playlist?list=PLSlCpG9zsECrWZLocBzr3MM8AAatkArUF)  
