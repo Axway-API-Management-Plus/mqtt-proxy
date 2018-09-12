@@ -1496,7 +1496,7 @@
 			</key>
 		</key>
 	</key>
-	<fval name="attributeName"><value>mqtt.body</value></fval>
+	<fval name="attributeName"><value>mqtt.payload</value></fval>
 	<fval name="expression"><value>$.Payload</value></fval>
 	<fval name="failOnError"><value>0</value></fval>
 	<fval name="unmarshalType"><value>java.lang.String</value></fval>
