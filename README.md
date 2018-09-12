@@ -58,7 +58,7 @@ another one using some of command line options provided by the mqtt-proxy binary
 ```sh
 docker run -it --rm -e AUTH_URL=http://172.17.0.1:8080/mqtt -e MQTT_BROKER_HOST=172.10.1 -e MQTT_BROKER_USERNAME=mqttuser -e MQTT_BROKER_PASSWORD=changeme -p 1884:1883 davinci1976/mqtt-proxy mqtt-proxy -mqtt-port 1884 -mqtts-port 1885
 ```
-The following environment variables including default values are supported (please the the --help for all command line options):
+The following environment variables including default values are supported (please use --help for all command line options):
 ```
 PORT 1883
 MQTT_BROKER_HOST 0.0.0.0
