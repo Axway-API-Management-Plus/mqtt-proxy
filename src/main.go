@@ -45,6 +45,8 @@ var Version string
 var Build string
 var Date string
 
+var logLevel string
+
 var authClient *http.Client
 
 func main() {
@@ -53,7 +55,8 @@ func main() {
 	formatter.FullTimestamp = true
 	formatter.TimestampFormat = "2006-01-02 15:04:05.000000000"
 	log.SetFormatter(formatter)
-	log.SetLevel(log.DebugLevel)
+
+	flag.String(flag.DefaultConfigFlagname, "", "Path to config file")
 
 	flag.IntVar(&mqttPort, "mqtt-port", 1883, "Mqtt port to listen to.")
 	flag.StringVar(&mqttHost, "mqtt-host", "0.0.0.0", "Mqtt interface to listen to.")
@@ -82,17 +85,37 @@ func main() {
 
 	flag.StringVar(&authURL, "auth-url", "", "URL to the authz/authn service")
 	flag.StringVar(&authCAFile, "auth-ca-file", "", "PEM encoded CA's certificate file for the authz/authn service")
+
+	flag.StringVar(&logLevel, "log-level", "info", "Log level [debug, info, warn, error](default: info)")
 	flag.Parse()
+
+
+	switch logLevel{
+	case "debug":
+		log.SetLevel(log.DebugLevel)
+	case "info":
+		log.SetLevel(log.InfoLevel)
+	case "warn":
+		log.SetLevel(log.WarnLevel)
+	case "error":
+		log.SetLevel(log.ErrorLevel)
+	default:
+		log.SetLevel(log.DebugLevel)
+		logLevel = "debug"
+	}
 
 	log.Println("Starting mqtt-proxy @ ", Version, Build, Date)
 	log.Println("mqtt server ", mqttBrokerHost, mqttBrokerPort, mqttBrokerUsername, mqttBrokerPassword)
 
+	log.Println("LogLevel:", logLevel)
+
 	if authURL != "" {
-		log.Println("auth connect   : ", authURL+"/connect")
-		log.Println("auth publish   : ", authURL+"/publish")
-		log.Println("auth subscribe : ", authURL+"/subscribe")
+		log.Println("auth url : ", authURL)
+		log.Debugln("auth connect   : ", authURL+"/connect")
+		log.Debugln("auth publish   : ", authURL+"/publish")
+		log.Debugln("auth subscribe : ", authURL+"/subscribe")
 	} else {
-		log.Println("auth : no auth url configured : bypassing!")
+		log.Warnln("auth : no auth url configured : bypassing!")
 	}
 
 	// Load CA cert
